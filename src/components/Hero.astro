@@ -1,0 +1,610 @@
+---
+import Icon from './Icon.astro';
+import { site } from '../data/site';
+
+const eyebrowText = `present day · present time · ${site.location}`;
+---
+{/* Arm the decode BEFORE first paint so the real text never flashes.
+    Only when motion is allowed — reduced-motion users get clean text. */}
+<script is:inline>
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches)
+    document.documentElement.classList.add('hero-armed');
+</script>
+
+<section id="top" data-hero class="relative min-h-screen flex items-center justify-center px-6 overflow-hidden">
+  {/* Parallax depth layers — subtle focal bloom (moves WITH the cursor) and
+      a surveillance-HUD reticle ring set (moves AGAINST it). Driven by the
+      --mx / --my custom props the field script writes on this section. */}
+  <div class="hero__depth" aria-hidden="true">
+    <div class="hero__glow"></div>
+    <svg class="hero__rings" viewBox="0 0 600 600" fill="none" aria-hidden="true">
+      <circle cx="300" cy="300" r="90" />
+      <circle cx="300" cy="300" r="160" />
+      <circle cx="300" cy="300" r="240" />
+      <path d="M300 40 V120 M300 480 V560 M40 300 H120 M480 300 H560" />
+    </svg>
+  </div>
+
+  {/* Focal cursor-reactive layer — node/wire constellation + signal pulses. */}
+  <canvas class="hero__field" aria-hidden="true"></canvas>
+
+  {/* One-time boot FX — scanline sweep + materialization bloom.
+      Distinct from the global .wired / .crt / .noise; plays once on load. */}
+  <div class="hero-fx" aria-hidden="true">
+    <div class="hero-fx__bloom"></div>
+    <div class="hero-fx__beam"></div>
+  </div>
+
+  <div class="hero-content max-w-3xl text-center">
+    <p data-el="eyebrow" class="eyebrow mb-5" aria-label={eyebrowText}>{eyebrowText}</p>
+
+    <h1
+      data-el="name"
+      class="glitch text-5xl sm:text-7xl font-bold tracking-tight mb-5"
+      data-text={site.name}
+      aria-label={site.name}
+    >
+      {site.name}
+    </h1>
+
+    <p
+      data-el="headline"
+      class="text-xl sm:text-2xl text-[var(--text-dim)] mb-3"
+      aria-label={site.headline}
+    >
+      {site.headline}
+    </p>
+
+    <p
+      id="tagline"
+      data-el="tagline"
+      class="font-mono text-base sm:text-lg text-[var(--primary)] h-7 mb-9"
+      aria-label={site.taglines[0]}
+    >
+      {site.taglines[0]}
+    </p>
+
+    <div data-el="actions" class="flex flex-wrap items-center justify-center gap-3">
+      <a href="/resume.pdf" class="btn btn-primary magnetic" target="_blank" rel="noopener">
+        Resume
+      </a>
+      <a href="https://github.com/ACHUX21" class="btn btn-ghost magnetic" target="_blank" rel="noopener noreferrer">
+        <Icon name="github" size={18} /> GitHub
+      </a>
+      <a href={`mailto:${site.email}`} class="btn btn-ghost magnetic">
+        <Icon name="mail" size={18} /> Email
+      </a>
+    </div>
+  </div>
+
+  {/* Custom reticle cursor — trailing ring + instant dot (fine pointers only). */}
+  <div class="hero-cursor" aria-hidden="true"></div>
+  <div class="hero-cursor__dot" aria-hidden="true"></div>
+
+  <a
+    href="#about"
+    data-el="chevron"
+    aria-label="Scroll to content"
+    class="absolute bottom-8 left-1/2 -translate-x-1/2 text-[var(--text-dim)] animate-bounce"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true">
+      <path d="M12 16 6 10l1.4-1.4L12 13.2l4.6-4.6L18 10z"/>
+    </svg>
+  </a>
+</section>
+
+<script is:inline define:vars={{ taglines: site.taglines }}>
+  /* =====================================================================
+     Data-Decode Entrance
+       Per-character katakana/hex decode materializes the eyebrow, name,
+       headline and tagline out of "Wired" data-noise, on a staggered
+       timeline under the one-time scanline sweep + bloom. Then hands off
+       to a scramble-transition rotating tagline.
+       - armed before first paint (.hero-armed) so real text never flashes
+       - aria-label carries the real string, so the accessible name is
+         stable while glyphs churn; real text ships in the DOM for no-JS/SEO
+       - short-circuits entirely under prefers-reduced-motion
+     ===================================================================== */
+  (() => {
+    const root = document.querySelector('[data-hero]');
+    if (!root) return;
+
+    // Reduced motion: content is authored plain and already visible. Bail.
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    // Wired "data noise": halfwidth katakana + hex + glitch symbols.
+    // No <, >, & — the scrambler writes via innerHTML.
+    const CHARS = 'ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈ0123456789ABCDEF#%*+=/\\|:~^';
+
+    class Scramble {
+      constructor(el) {
+        this.el = el;
+        this.current = '';
+        this.req = 0;
+        this.update = this.update.bind(this);
+      }
+      to(text) {
+        this.final = text;
+        const old = this.current;
+        const len = Math.max(old.length, text.length);
+        this.queue = [];
+        for (let i = 0; i < len; i++) {
+          const from = old[i] || '';
+          const to = text[i] || '';
+          const start = (Math.random() * 18) | 0;
+          const end = start + 14 + ((Math.random() * 24) | 0);
+          this.queue.push({ from, to, start, end, char: '' });
+        }
+        cancelAnimationFrame(this.req);
+        this.frame = 0;
+        return new Promise((res) => {
+          this.resolve = res;
+          this.update();
+        });
+      }
+      update() {
+        let out = '';
+        let done = 0;
+        for (const q of this.queue) {
+          if (this.frame >= q.end) {
+            done++;
+            out += q.to;
+          } else if (this.frame >= q.start) {
+            if (!q.char || Math.random() < 0.3) q.char = CHARS[(Math.random() * CHARS.length) | 0];
+            out += '<span class="dud">' + q.char + '</span>';
+          } else if (q.from) {
+            out += '<span class="dud">' + q.from + '</span>';
+          }
+        }
+        this.el.innerHTML = out;
+        if (done === this.queue.length) {
+          this.el.textContent = this.final;
+          this.current = this.final;
+          if (this.resolve) this.resolve();
+        } else {
+          this.frame++;
+          this.req = requestAnimationFrame(this.update);
+        }
+      }
+    }
+
+    const pick = (s) => root.querySelector(s);
+    const els = {
+      eyebrow: pick('[data-el="eyebrow"]'),
+      name: pick('[data-el="name"]'),
+      headline: pick('[data-el="headline"]'),
+      tagline: pick('[data-el="tagline"]'),
+      actions: pick('[data-el="actions"]'),
+      chevron: pick('[data-el="chevron"]'),
+    };
+
+    // Capture the authored text, then blank the decode targets so they
+    // resolve from empty. aria-label keeps the accessible name intact.
+    const DECODE = ['eyebrow', 'name', 'headline', 'tagline'];
+    const target = {};
+    for (const k of DECODE) {
+      target[k] = els[k] ? els[k].textContent : '';
+      if (els[k]) els[k].textContent = '';
+    }
+
+    const lit = (el) => el && requestAnimationFrame(() => el.classList.add('lit'));
+    const scr = {};
+    const decode = (k) => {
+      const s = new Scramble(els[k]);
+      scr[k] = s;
+      lit(els[k]);
+      return s.to(target[k]);
+    };
+
+    // Staggered materialization timeline (ms): eyebrow → name → headline →
+    // tagline → buttons → chevron.
+    setTimeout(() => decode('eyebrow'), 120);
+    setTimeout(() => {
+      els.name.classList.add('decoding');
+      decode('name').then(() => els.name.classList.remove('decoding'));
+    }, 380);
+    setTimeout(() => decode('headline'), 820);
+    setTimeout(() => decode('tagline').then(startRotation), 1180);
+    setTimeout(() => lit(els.actions), 1500);
+    setTimeout(() => lit(els.chevron), 1750);
+
+    // Hand off to the rotating tagline — now a scramble transition.
+    function startRotation() {
+      if (!taglines || taglines.length < 2) return;
+      let i = 0;
+      setInterval(() => {
+        i = (i + 1) % taglines.length;
+        scr.tagline.to(taglines[i]);
+      }, 4200);
+    }
+  })();
+</script>
+
+<script is:inline>
+  /* =====================================================================
+     Cursor-reactive Wired Field  (focal layer under the decoding name)
+       - canvas node/wire constellation w/ ambient drift + twinkle
+       - self-chaining signal PULSES travelling along the wires (alive
+         even when idle / on touch, where lean + magnets are disabled)
+       - cursor "lean" + node-to-cursor wires ("materialising into the net")
+       - mouse-parallax depth via --mx / --my (glow moves WITH, rings AGAINST)
+       - custom reticle cursor (trailing ring + instant dot) w/ CTA lock-on
+       - magnetic CTA buttons (cached base-centres → no per-frame reflow)
+       - scroll DISSOLVE via --sp: field + content "upload" toward About
+     Delta-time normalised (identical speed at 60 / 120 Hz). Additive
+     "lighter" phosphor bloom, no shadowBlur. Fully degrades on touch /
+     reduced motion; the rAF loop hard-stops off-screen or on a hidden tab.
+     Zero dependencies.
+     ===================================================================== */
+  (() => {
+    const root = document.querySelector('[data-hero]');
+    if (!root) return;
+    const canvas = root.querySelector('.hero__field');
+    const ctx = canvas && canvas.getContext('2d');
+    if (!ctx) return;
+
+    const ring = root.querySelector('.hero-cursor');
+    const dot = root.querySelector('.hero-cursor__dot');
+    const magnets = [...root.querySelectorAll('.magnetic')].map((el) => ({
+      el, x: 0, y: 0, bcx: 0, bcy: 0, rmax: 0,
+    }));
+    const hoverEls = [...root.querySelectorAll('a, button')];
+
+    const reduceMq = matchMedia('(prefers-reduced-motion: reduce)');
+    const fineMq = matchMedia('(hover: hover) and (pointer: fine)');
+    const interactive = () => fineMq.matches && !reduceMq.matches;
+
+    /* palette — the purple OKLCH tokens, expressed in canvas RGB */
+    const NODE = 'rgb(188,150,245)';
+    const LINK = 'rgb(150,104,228)';
+    const CUR = 'rgb(206,170,250)';
+    const PULSE = 'rgb(224,198,255)';
+
+    /* tunables */
+    const PAR = 26, LEAN = 190, LEAN_K = 0.28;
+    const LINK_DIST = 132, CUR_DIST = 168;
+    const LINK_DIST2 = LINK_DIST * LINK_DIST;
+    const CUR_DIST2 = CUR_DIST * CUR_DIST;
+    const TAU = Math.PI * 2;
+    const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
+
+    let W = 0, H = 0, dpr = 1, secLeft = 0, secTop = 0;
+    let nodes = [], pulses = [], pulseCap = 0, nextSeed = 0;
+    let raf = 0, running = false, visible = true, tabVisible = true, lastT = 0;
+    let fieldAlpha = 0; // materialise fade-in 0→1
+    let inf = 0;        // cursor influence 0→1 (eased)
+
+    let pvx = innerWidth / 2, pvy = innerHeight / 2; // pointer target (viewport)
+    let svx = pvx, svy = pvy;   // smoothed — ring + field
+    let dvx = pvx, dvy = pvy;   // faster smoothed — dot
+    let active = false;
+
+    function updateRect() {
+      const r = root.getBoundingClientRect();
+      secLeft = r.left; secTop = r.top;
+    }
+
+    function resize() {
+      const r = root.getBoundingClientRect();
+      W = r.width; H = r.height; secLeft = r.left; secTop = r.top;
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(W * dpr);
+      canvas.height = Math.round(H * dpr);
+      canvas.style.width = W + 'px';
+      canvas.style.height = H + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      seed();
+      measureMagnets();
+    }
+
+    function seed() {
+      const t = clamp(Math.round((W * H) / 24000), 18, 66);
+      const pad = 40, old = nodes;
+      nodes = [];
+      for (let i = 0; i < t; i++) {
+        const o = old[i];
+        nodes.push({
+          bx: o ? clamp(o.bx, -pad, W + pad) : Math.random() * (W + pad * 2) - pad,
+          by: o ? clamp(o.by, -pad, H + pad) : Math.random() * (H + pad * 2) - pad,
+          z: 0.35 + Math.random() * 0.65,
+          vx: (Math.random() - 0.5) * 0.16,
+          vy: (Math.random() - 0.5) * 0.16,
+          ph: Math.random() * TAU,
+          rx: 0, ry: 0,
+        });
+      }
+      pulses = [];
+      pulseCap = clamp(Math.round(t / 6), 3, 11);
+      nextSeed = 0;
+    }
+
+    /* nodes within wire range of node i (uses current render positions) */
+    function neighborsOf(i, exclude) {
+      const a = nodes[i], out = [];
+      for (let j = 0; j < nodes.length; j++) {
+        if (j === i || j === exclude) continue;
+        const dx = nodes[j].rx - a.rx, dy = nodes[j].ry - a.ry;
+        if (dx * dx + dy * dy <= LINK_DIST2) out.push(j);
+      }
+      return out;
+    }
+    function seedPulse() {
+      if (pulses.length >= pulseCap || nodes.length < 2) return;
+      const i = (Math.random() * nodes.length) | 0;
+      const nb = neighborsOf(i, -1);
+      if (!nb.length) return;
+      pulses.push({ a: i, b: nb[(Math.random() * nb.length) | 0], t: 0, sp: 0.006 + Math.random() * 0.006 });
+    }
+    /* advance pulses; on arrival, chain to a random in-range neighbour */
+    function updatePulses(dt, t) {
+      if (t > nextSeed && pulses.length < pulseCap) {
+        seedPulse();
+        nextSeed = t + 480 + Math.random() * 900;
+      }
+      for (let k = pulses.length - 1; k >= 0; k--) {
+        const p = pulses[k];
+        p.t += p.sp * dt;
+        if (p.t >= 1) {
+          const nb = neighborsOf(p.b, p.a);
+          if (nb.length && Math.random() < 0.7) {
+            p.a = p.b; p.b = nb[(Math.random() * nb.length) | 0];
+            p.t -= 1; p.sp = 0.006 + Math.random() * 0.006;
+          } else {
+            pulses.splice(k, 1);
+          }
+        }
+      }
+    }
+
+    function draw(t, dt, localX, localY, pmx, pmy) {
+      const pad = 40;
+      ctx.clearRect(0, 0, W, H);
+
+      // 1. advance base drift (delta-time normalised) + resolve render pos
+      for (const n of nodes) {
+        n.bx += n.vx * dt; n.by += n.vy * dt;
+        if (n.bx < -pad) n.bx = W + pad; else if (n.bx > W + pad) n.bx = -pad;
+        if (n.by < -pad) n.by = H + pad; else if (n.by > H + pad) n.by = -pad;
+        let rx = n.bx + pmx * n.z * PAR;
+        let ry = n.by + pmy * n.z * PAR;
+        if (inf > 0.01) {
+          const ddx = localX - rx, ddy = localY - ry;
+          const d = Math.hypot(ddx, ddy);
+          if (d < LEAN) {
+            const f = (1 - d / LEAN) * LEAN_K * inf;
+            rx += ddx * f; ry += ddy * f;
+          }
+        }
+        n.rx = rx; n.ry = ry;
+      }
+
+      // 2. pulses (positions now resolved)
+      updatePulses(dt, t);
+
+      // additive phosphor bloom — no shadowBlur
+      ctx.globalCompositeOperation = 'lighter';
+
+      // 3. node-to-node wires
+      ctx.strokeStyle = LINK;
+      ctx.lineWidth = 1;
+      for (let i = 0; i < nodes.length; i++) {
+        const a = nodes[i];
+        for (let j = i + 1; j < nodes.length; j++) {
+          const b = nodes[j];
+          const dx = a.rx - b.rx, dy = a.ry - b.ry;
+          const d2 = dx * dx + dy * dy;
+          if (d2 > LINK_DIST2) continue;
+          const s = 1 - Math.sqrt(d2) / LINK_DIST;
+          ctx.globalAlpha = s * s * 0.4 * fieldAlpha * ((a.z + b.z) * 0.5);
+          ctx.beginPath();
+          ctx.moveTo(a.rx, a.ry);
+          ctx.lineTo(b.rx, b.ry);
+          ctx.stroke();
+        }
+      }
+
+      // 4. node-to-cursor wires ("materialising into the network")
+      if (inf > 0.02) {
+        ctx.strokeStyle = CUR;
+        for (const n of nodes) {
+          const dx = localX - n.rx, dy = localY - n.ry;
+          const d2 = dx * dx + dy * dy;
+          if (d2 > CUR_DIST2) continue;
+          const s = 1 - Math.sqrt(d2) / CUR_DIST;
+          ctx.globalAlpha = s * s * 0.5 * fieldAlpha * inf;
+          ctx.beginPath();
+          ctx.moveTo(n.rx, n.ry);
+          ctx.lineTo(localX, localY);
+          ctx.stroke();
+        }
+      }
+
+      // 5. signal pulses travelling the wires
+      ctx.fillStyle = PULSE;
+      for (const p of pulses) {
+        const a = nodes[p.a], b = nodes[p.b];
+        if (!a || !b) continue;
+        const x = a.rx + (b.rx - a.rx) * p.t, y = a.ry + (b.ry - a.ry) * p.t;
+        ctx.globalAlpha = 0.18 * fieldAlpha;
+        ctx.beginPath(); ctx.arc(x, y, 4.5, 0, TAU); ctx.fill();
+        ctx.globalAlpha = 0.9 * fieldAlpha;
+        ctx.beginPath(); ctx.arc(x, y, 1.5, 0, TAU); ctx.fill();
+      }
+
+      // 6. nodes — faint halo + bright core (additive bloom)
+      for (const n of nodes) {
+        const tw = 0.6 + 0.4 * Math.sin(t * 0.002 + n.ph);
+        const base = (0.16 + 0.4 * n.z) * tw * fieldAlpha;
+        ctx.fillStyle = NODE;
+        ctx.globalAlpha = base * 0.5;
+        ctx.beginPath(); ctx.arc(n.rx, n.ry, 2.4 + n.z * 2.6, 0, TAU); ctx.fill();
+        ctx.globalAlpha = base;
+        ctx.beginPath(); ctx.arc(n.rx, n.ry, 1 + n.z * 1.3, 0, TAU); ctx.fill();
+      }
+
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.globalAlpha = 1;
+    }
+
+    function updateCursor() {
+      if (!ring || !dot) return;
+      ring.style.transform = `translate(${svx}px, ${svy}px) translate(-50%, -50%)`;
+      dot.style.transform = `translate(${dvx}px, ${dvy}px) translate(-50%, -50%)`;
+      ring.style.opacity = String(inf);
+      dot.style.opacity = String(inf);
+    }
+
+    /* cache base centres (rect minus applied transform) — retires the
+       per-frame getBoundingClientRect reflow risk; refreshed on
+       resize / scroll / pointer-enter only */
+    function measureMagnets() {
+      for (const m of magnets) {
+        const r = m.el.getBoundingClientRect();
+        m.bcx = r.left + r.width / 2 - m.x;
+        m.bcy = r.top + r.height / 2 - m.y;
+        m.rmax = 70 + Math.max(r.width, r.height) / 2;
+      }
+    }
+    function updateMagnets() {
+      for (const m of magnets) {
+        let tx = 0, ty = 0;
+        if (inf > 0.001) {
+          const ddx = svx - m.bcx, ddy = svy - m.bcy;
+          if (Math.hypot(ddx, ddy) < m.rmax) {
+            const k = 0.4 * inf, max = 26;
+            tx = clamp(ddx * k, -max, max);
+            ty = clamp(ddy * k, -max, max);
+          }
+        }
+        m.x += (tx - m.x) * 0.2;
+        m.y += (ty - m.y) * 0.2;
+        if (tx === 0 && ty === 0 && Math.abs(m.x) < 0.15 && Math.abs(m.y) < 0.15) {
+          m.x = 0; m.y = 0;
+          if (m.el.style.transform) m.el.style.transform = '';
+        } else {
+          m.el.style.transform = `translate(${m.x.toFixed(2)}px, ${m.y.toFixed(2)}px)`;
+        }
+      }
+    }
+
+    function frame(t) {
+      raf = 0;
+      const dt = lastT ? clamp((t - lastT) / 16.667, 0.2, 3) : 1;
+      lastT = t;
+
+      svx += (pvx - svx) * 0.12; svy += (pvy - svy) * 0.12;
+      dvx += (pvx - dvx) * 0.35; dvy += (pvy - dvy) * 0.35;
+      fieldAlpha += (1 - fieldAlpha) * 0.03 * dt;
+      inf += ((active ? 1 : 0) - inf) * 0.08 * dt;
+
+      const localX = svx - secLeft, localY = svy - secTop;
+      const pmx = active ? clamp((localX - W / 2) / (W / 2), -1, 1) * inf : 0;
+      const pmy = active ? clamp((localY - H / 2) / (H / 2), -1, 1) * inf : 0;
+      root.style.setProperty('--mx', pmx.toFixed(3));
+      root.style.setProperty('--my', pmy.toFixed(3));
+
+      draw(t, dt, localX, localY, pmx, pmy);
+      if (interactive()) { updateCursor(); updateMagnets(); }
+
+      if (running) raf = requestAnimationFrame(frame);
+    }
+
+    function start() {
+      if (running || reduceMq.matches) return;
+      running = true;
+      lastT = 0; // reset dt so a resumed loop never sees a huge first step
+      if (!raf) raf = requestAnimationFrame(frame);
+    }
+    function stop() {
+      running = false;
+      if (raf) { cancelAnimationFrame(raf); raf = 0; }
+    }
+    function sync() { (visible && tabVisible ? start : stop)(); }
+
+    /* single static frame for reduced motion */
+    function renderStatic() {
+      resize();
+      fieldAlpha = 1; inf = 0;
+      draw(0, 1, -9999, -9999, 0, 0);
+    }
+
+    /* resize — rAF-throttled */
+    let rTick = false;
+    addEventListener('resize', () => {
+      if (rTick) return; rTick = true;
+      requestAnimationFrame(() => {
+        rTick = false;
+        reduceMq.matches ? renderStatic() : resize();
+      });
+    });
+
+    /* scroll — passive, rAF-throttled: refresh rect + magnet centres and
+       drive the dissolve progress --sp */
+    let sTick = false;
+    addEventListener('scroll', () => {
+      if (sTick) return; sTick = true;
+      requestAnimationFrame(() => {
+        sTick = false;
+        updateRect();
+        measureMagnets();
+        if (!reduceMq.matches) {
+          const p = clamp(scrollY / (innerHeight * 0.85), 0, 1);
+          root.style.setProperty('--sp', p.toFixed(4));
+        }
+      });
+    }, { passive: true });
+
+    if (typeof ResizeObserver !== 'undefined') {
+      new ResizeObserver(() => { if (!reduceMq.matches) resize(); }).observe(root);
+    }
+    /* pause off-screen / on hidden tab — hard-stops all rAF work */
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver((e) => { visible = e[0].isIntersecting; sync(); }, { threshold: 0.02 }).observe(root);
+    }
+    document.addEventListener('visibilitychange', () => { tabVisible = !document.hidden; sync(); });
+
+    /* live prefers-reduced-motion toggle */
+    const onMotion = () => {
+      if (reduceMq.matches) {
+        stop();
+        root.classList.remove('hero--cursor');
+        if (ring) ring.style.opacity = '0';
+        if (dot) dot.style.opacity = '0';
+        root.style.setProperty('--sp', '0');
+        renderStatic();
+      } else {
+        resize();
+        if (interactive()) root.classList.add('hero--cursor');
+        start();
+      }
+    };
+    if (reduceMq.addEventListener) reduceMq.addEventListener('change', onMotion);
+
+    /* pointer wiring — mouse only */
+    if (fineMq.matches) {
+      addEventListener('pointermove', (e) => {
+        if (e.pointerType && e.pointerType !== 'mouse') return;
+        pvx = e.clientX; pvy = e.clientY;
+      }, { passive: true });
+      root.addEventListener('pointerenter', (e) => {
+        if (e.pointerType && e.pointerType !== 'mouse') return;
+        active = true;
+        measureMagnets();
+      });
+      root.addEventListener('pointerleave', () => { active = false; });
+      for (const el of hoverEls) {
+        el.addEventListener('pointerenter', () => ring && ring.classList.add('is-hover'));
+        el.addEventListener('pointerleave', () => ring && ring.classList.remove('is-hover'));
+      }
+    }
+
+    /* init */
+    if (reduceMq.matches) {
+      renderStatic();
+    } else {
+      resize();
+      if (interactive()) root.classList.add('hero--cursor');
+      start();
+    }
+  })();
+</script>

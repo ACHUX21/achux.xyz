@@ -1,0 +1,551 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/jetbrains-mono';
+
+/* =====================================================================
+   ACHUX21 — "the Wired" theme (Serial Experiments Lain vibe)
+   grayscale base · red CRT accent · scanlines · glitch · static
+   ===================================================================== */
+@theme {
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:root {
+  /* purple CRT phosphor glow — monochrome, no rainbow */
+  --accent: oklch(0.62 0.2 300);
+  --accent-bright: oklch(0.74 0.19 300);
+  --accent-soft: oklch(0.62 0.2 300 / 0.14);
+  --accent-2: oklch(0.78 0.14 320); /* lighter lilac for subtle glitch split */
+  --primary: var(--accent-bright); /* alias for existing component refs */
+  --primary-soft: var(--accent-soft);
+
+  /* dark (default) — deep violet-black, like an unlit CRT */
+  --bg: oklch(0.145 0.025 300);
+  --bg-2: oklch(0.19 0.03 300);
+  --text: oklch(0.92 0.01 300);
+  --text-dim: oklch(0.92 0.01 300 / 0.55);
+  --panel-bg: oklch(0.2 0.03 300 / 0.5);
+  --panel-border: oklch(0.8 0.04 300 / 0.14);
+  --glow: oklch(0.62 0.2 300 / 0.4);
+
+  color-scheme: dark;
+}
+
+:root.light {
+  --bg: oklch(0.93 0.015 300);
+  --bg-2: oklch(0.97 0.01 300);
+  --text: oklch(0.22 0.04 300);
+  --text-dim: oklch(0.22 0.04 300 / 0.6);
+  --panel-bg: oklch(1 0 0 / 0.5);
+  --panel-border: oklch(0.35 0.06 300 / 0.18);
+  --glow: oklch(0.62 0.2 300 / 0.22);
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+/* ---- Panels / cards (CRT panel, faint bezel) ---- */
+.glass-card {
+  background: var(--panel-bg);
+  backdrop-filter: blur(10px) saturate(120%);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+  border: 1px solid var(--panel-border);
+  border-radius: 0.5rem;
+  box-shadow: 0 8px 40px -14px oklch(0 0 0 / 0.6);
+  transition:
+    transform 0.25s var(--ease-out-expo),
+    box-shadow 0.25s var(--ease-out-expo),
+    border-color 0.25s var(--ease-out-expo);
+}
+.glass-card:hover {
+  transform: translateY(-3px);
+  border-color: oklch(0.62 0.21 25 / 0.5);
+  box-shadow: 0 16px 46px -14px var(--glow);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  padding: 0.22rem 0.6rem;
+  border-radius: 0.25rem;
+  color: var(--text-dim);
+  background: var(--accent-soft);
+  border: 1px solid var(--panel-border);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.25rem;
+  border-radius: 0.375rem;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.25s var(--ease-out-expo);
+  border: 1px solid transparent;
+}
+.btn-primary {
+  background: var(--accent);
+  color: var(--bg);
+}
+.btn-primary:hover {
+  background: var(--accent-bright);
+  box-shadow: 0 0 26px -4px var(--glow);
+  transform: translateY(-2px);
+}
+.btn-ghost {
+  border-color: var(--panel-border);
+  color: var(--text);
+  background: var(--panel-bg);
+  backdrop-filter: blur(8px);
+}
+.btn-ghost:hover {
+  border-color: var(--accent);
+  color: var(--accent-bright);
+  transform: translateY(-2px);
+}
+
+.link-underline {
+  position: relative;
+  color: var(--text-dim);
+  transition: color 0.2s;
+}
+.link-underline::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 1px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.25s var(--ease-out-expo);
+}
+.link-underline:hover { color: var(--text); }
+.link-underline:hover::after { transform: scaleX(1); transform-origin: left; }
+
+/* ---- Glitch text (RGB split) ---- */
+.glitch {
+  position: relative;
+  color: var(--text);
+}
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  clip-path: inset(0);
+}
+.glitch::before {
+  color: var(--accent);
+  transform: translate(-2px, 0);
+  animation: glitch-x 3.2s infinite steps(2, end);
+  mix-blend-mode: screen;
+}
+.glitch::after {
+  color: var(--accent-2);
+  transform: translate(2px, 0);
+  animation: glitch-y 2.6s infinite steps(2, end);
+  mix-blend-mode: screen;
+}
+@keyframes glitch-x {
+  0%, 92%, 100% { clip-path: inset(0 0 100% 0); transform: translate(0); }
+  93% { clip-path: inset(10% 0 60% 0); transform: translate(-3px, -1px); }
+  96% { clip-path: inset(70% 0 10% 0); transform: translate(-4px, 1px); }
+}
+@keyframes glitch-y {
+  0%, 90%, 100% { clip-path: inset(0 0 100% 0); transform: translate(0); }
+  91% { clip-path: inset(40% 0 40% 0); transform: translate(3px, 1px); }
+  95% { clip-path: inset(15% 0 55% 0); transform: translate(4px, -1px); }
+}
+
+.accent-text { color: var(--accent-bright); }
+.grad-text {
+  background: linear-gradient(100deg, var(--accent-bright), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---- Scroll reveal ---- */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s var(--ease-out-expo), transform 0.6s var(--ease-out-expo);
+}
+.reveal.in-view { opacity: 1; transform: none; }
+
+/* ---- The Wired background (drifting glow + faint node grid) ---- */
+.wired {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(65vw 65vw at 85% -15%, oklch(0.45 0.2 300 / 0.4), transparent 62%),
+    radial-gradient(55vw 55vw at 5% 115%, oklch(0.4 0.17 315 / 0.34), transparent 62%),
+    radial-gradient(40vw 40vw at 50% 50%, oklch(0.3 0.12 285 / 0.18), transparent 70%);
+}
+.wired__grid {
+  position: absolute;
+  inset: -50%;
+  background-image:
+    linear-gradient(oklch(0.85 0.05 300 / 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, oklch(0.85 0.05 300 / 0.06) 1px, transparent 1px);
+  background-size: 46px 46px;
+  transform: perspective(400px) rotateX(60deg) translateY(0);
+  animation: gridflow 14s linear infinite;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+}
+@keyframes gridflow {
+  to { transform: perspective(400px) rotateX(60deg) translateY(46px); }
+}
+
+/* ---- CRT overlay: scanlines + vignette + flicker (over everything) ---- */
+.crt {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+.crt::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    oklch(0 0 0 / 0) 0,
+    oklch(0 0 0 / 0) 2px,
+    oklch(0 0 0 / 0.22) 3px,
+    oklch(0 0 0 / 0.22) 3px
+  );
+}
+.crt::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 55%, oklch(0 0 0 / 0.5) 100%);
+}
+.crt-flicker { animation: flicker 5s infinite steps(1); }
+@keyframes flicker {
+  0%, 96%, 100% { opacity: 1; }
+  97% { opacity: 0.82; }
+  98% { opacity: 0.95; }
+}
+
+/* ---- Static noise (TV snow) ---- */
+.noise {
+  position: fixed;
+  inset: 0;
+  z-index: 61;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: snow 0.6s steps(3) infinite;
+}
+@keyframes snow {
+  0% { transform: translate(0, 0); }
+  33% { transform: translate(-3%, 2%); }
+  66% { transform: translate(2%, -3%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* section eyebrow marker */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--accent-bright);
+}
+
+/* =====================================================================
+   Hero — "Data-Decode Entrance": name + tagline materialize from
+   scrambled Wired glyphs, under a one-time scanline sweep + bloom.
+   This is a distinct FOCAL layer that sits ON TOP of the global
+   .wired / .crt / .noise — it does not duplicate them.
+   ===================================================================== */
+
+/* Scramble glyphs ("data noise") shown while a character is resolving */
+.dud {
+  color: var(--accent-2);
+  opacity: 0.72;
+  text-shadow: 0 0 8px var(--glow);
+}
+
+/* Content sits above the FX layer */
+[data-hero] .hero-content { position: relative; z-index: 10; }
+
+/* The h1 RGB-split glitch is noise while characters are still resolving */
+.glitch.decoding::before,
+.glitch.decoding::after { opacity: 0; }
+
+/* Focal FX layer (behind hero content), edge-masked so it never hits the
+   viewport border harshly */
+.hero-fx {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0;
+  -webkit-mask-image: radial-gradient(120% 90% at 50% 42%, #000 55%, transparent 100%);
+          mask-image: radial-gradient(120% 90% at 50% 42%, #000 55%, transparent 100%);
+}
+.hero-fx__bloom {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: min(70vw, 720px);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%) scale(0.6);
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--glow), transparent 62%);
+  opacity: 0;
+}
+.hero-fx__beam {
+  position: absolute;
+  left: -10%;
+  top: 0;
+  width: 120%;
+  height: 46vh;
+  transform: translateY(-60vh);
+  opacity: 0;
+  mix-blend-mode: screen;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    oklch(0.74 0.19 300 / 0.05) 62%,
+    oklch(0.86 0.16 300 / 0.35) 92%,
+    var(--accent-bright) 100%
+  );
+  box-shadow: 0 2px 22px 2px var(--glow);
+}
+
+/* Armed states apply ONLY when JS ran (.hero-armed) AND motion is allowed.
+   No JS / reduced motion => content is simply present and visible. */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-armed [data-hero] [data-el] {
+    opacity: 0;
+    filter: blur(7px);
+    transform: translateY(10px);
+  }
+  .hero-armed [data-hero] [data-el].lit {
+    opacity: 1;
+    filter: blur(0);
+    transform: none;
+    transition:
+      opacity 0.55s var(--ease-out-expo),
+      filter 0.55s var(--ease-out-expo),
+      transform 0.55s var(--ease-out-expo);
+  }
+
+  .hero-armed [data-hero] .hero-fx { opacity: 1; }
+  .hero-armed [data-hero] .hero-fx__beam {
+    animation: hero-beam 1.5s var(--ease-out-expo) 0.06s forwards;
+  }
+  .hero-armed [data-hero] .hero-fx__bloom {
+    animation: hero-bloom 1.7s var(--ease-out-expo) 0.28s forwards;
+  }
+}
+
+@keyframes hero-beam {
+  0%   { transform: translateY(-60vh); opacity: 0; }
+  12%  { opacity: 1; }
+  88%  { opacity: 0.9; }
+  100% { transform: translateY(110vh); opacity: 0; }
+}
+@keyframes hero-bloom {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
+  45%  { opacity: 0.55; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.05); }
+}
+
+/* =====================================================================
+   Hero — Cursor-reactive Wired Field (focal layer grafted onto the
+   data-decode entrance above). Node/wire canvas + parallax depth +
+   reticle cursor + magnetic CTAs + scroll dissolve. Sits ON TOP of the
+   global .wired / .crt / .noise without duplicating them. No deps.
+   ===================================================================== */
+[data-hero] { --mx: 0; --my: 0; --sp: 0; }
+
+/* node/wire constellation canvas — the reactive mid-ground layer */
+.hero__field {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* parallax depth container (behind the field) */
+.hero__depth {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* subtle focal bloom — parallaxes WITH the cursor. Kept faint on purpose:
+   it adds interactive depth the static global .wired glow lacks, without
+   stacking a second bright light behind the name. */
+.hero__glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 46vmax;
+  height: 46vmax;
+  border-radius: 50%;
+  transform: translate(-50%, -50%)
+             translate3d(calc(var(--mx) * 30px), calc(var(--my) * 30px), 0);
+  background: radial-gradient(circle, oklch(0.5 0.2 300 / 0.2), transparent 62%);
+  will-change: transform;
+}
+
+/* surveillance-HUD reticle rings — parallax AGAINST the cursor (depth) */
+.hero__rings {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(88vw, 620px);
+  height: min(88vw, 620px);
+  transform: translate(-50%, -50%)
+             translate3d(calc(var(--mx) * -16px), calc(var(--my) * -16px), 0);
+  stroke: var(--accent);
+  stroke-width: 1;
+  fill: none;
+  opacity: 0.1;
+  animation: hero-breathe 7s var(--ease-out-expo) infinite;
+  will-change: transform, opacity;
+}
+@keyframes hero-breathe {
+  0%, 100% { opacity: 0.06; }
+  50% { opacity: 0.14; }
+}
+
+/* ---- Custom reticle cursor (fine pointers only; JS toggles .hero--cursor) ---- */
+.hero--cursor,
+.hero--cursor a,
+.hero--cursor button { cursor: none; }
+
+.hero-cursor,
+.hero-cursor__dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+.hero-cursor {
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--accent-bright);
+  border-radius: 50%;
+  box-shadow: 0 0 12px -2px var(--glow), inset 0 0 8px -4px var(--glow);
+  transition:
+    width 0.22s var(--ease-out-expo),
+    height 0.22s var(--ease-out-expo),
+    border-color 0.22s var(--ease-out-expo),
+    background-color 0.22s var(--ease-out-expo);
+}
+.hero-cursor::before,
+.hero-cursor::after {
+  content: '';
+  position: absolute;
+  background: var(--accent-bright);
+  opacity: 0.7;
+}
+.hero-cursor::before { top: 50%; left: -5px; right: -5px; height: 1px; transform: translateY(-50%); }
+.hero-cursor::after  { left: 50%; top: -5px; bottom: -5px; width: 1px; transform: translateX(-50%); }
+
+.hero-cursor__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent-bright);
+  box-shadow: 0 0 8px 0 var(--glow);
+}
+
+/* reticle "locks on" over interactive targets */
+.hero-cursor.is-hover {
+  width: 54px;
+  height: 54px;
+  border-color: var(--accent-2);
+  background: var(--accent-soft);
+}
+
+/* ---- Motion-only: magnet promotion + scroll dissolve ---- */
+@media (prefers-reduced-motion: no-preference) {
+  [data-hero] .magnetic { will-change: transform; }
+
+  /* As the visitor scrolls toward About, the identity "uploads" up into
+     the network: content lifts + scales + fades, the field + depth fade.
+     Transform + opacity ONLY (compositor-friendly). No filter:blur during
+     scroll — animating blur-radius per frame forces re-raster / jank; the
+     lift+scale+fade already reads as dissolving into the Wired at 60fps. */
+  [data-hero] .hero-content {
+    transform: translateY(calc(var(--sp) * -34px)) scale(calc(1 + var(--sp) * 0.05));
+    opacity: calc(1 - var(--sp) * 1.1);
+    will-change: transform, opacity;
+  }
+  [data-hero] .hero__field,
+  [data-hero] .hero__depth {
+    opacity: calc(1 - var(--sp) * 1.2);
+    will-change: opacity;
+  }
+}
+
+/* ---- Degrade: touch / coarse pointers get no custom cursor ---- */
+@media (hover: none), (pointer: coarse) {
+  .hero-cursor, .hero-cursor__dot { display: none; }
+}
+
+/* ---- Reduced motion ---- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .wired__grid, .noise, .crt-flicker,
+  .glitch::before, .glitch::after { animation: none; }
+  .glitch::before, .glitch::after { display: none; }
+  .glass-card:hover { transform: none; }
+  .hero-fx { display: none; }
+
+  /* freeze the focal field's motion, restore the native cursor. The canvas
+     keeps a single static constellation frame drawn by JS. */
+  .hero__rings { animation: none; }
+  .hero__glow { transform: translate(-50%, -50%); }
+  .hero-cursor, .hero-cursor__dot { display: none; }
+  .hero--cursor,
+  .hero--cursor a,
+  .hero--cursor button { cursor: auto; }
+}

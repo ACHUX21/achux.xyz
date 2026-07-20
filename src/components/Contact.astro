@@ -1,0 +1,37 @@
+---
+import Icon from './Icon.astro';
+import { site, socials } from '../data/site';
+const year = new Date().getFullYear();
+---
+<section id="contact" class="max-w-4xl mx-auto px-6 py-28 scroll-mt-20 text-center">
+  <div class="reveal">
+    <h2 class="font-mono text-sm text-[var(--primary)] tracking-widest uppercase mb-4">
+      05 / Contact
+    </h2>
+    <p class="text-3xl sm:text-4xl font-light mb-8">
+      Let&rsquo;s build or break something.
+    </p>
+    <a href={`mailto:${site.email}`} class="btn btn-primary text-lg">
+      <Icon name="mail" size={20} /> {site.email}
+    </a>
+
+    <div class="flex items-center justify-center gap-2 mt-10">
+      {socials.map((s) => (
+        <a
+          href={s.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={s.label}
+          class="p-3 rounded-full glass-card !rounded-full hover:text-[var(--primary)]"
+        >
+          <Icon name={s.icon} size={20} />
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<footer class="max-w-6xl mx-auto px-6 py-8 border-t border-[var(--panel-border)] text-center text-sm text-[var(--text-dim)]">
+  <p class="font-mono accent-text mb-1">close the world &middot; open the nExt</p>
+  <p>© {year} {site.name} · Built with Astro</p>
+</footer>
