@@ -24,8 +24,11 @@ jobs:
         uses: actions/checkout@v4
       - name: Build with Astro
         uses: withastro/action@v3
+        with:
+          node-version: 22
         # Auto-detects pnpm (pnpm-lock.yaml), installs, runs `astro build`,
-        # and uploads ./dist as the Pages artifact.
+        # and uploads ./dist as the Pages artifact. Node 22 is required by
+        # the pinned pnpm@11 (needs >= 22.13).
 
   deploy:
     needs: build
