@@ -1,189 +1,462 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Time Complexity Growth Visualizer</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    }
-    body {
-      background-color: #0f172a;
-      color: #e2e8f0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 24px;
-      min-height: 100vh;
-    }
-    .container {
-      width: 100%;
-      max-width: 1050px;
-      background: #1e293b;
-      border-radius: 12px;
-      padding: 24px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-    }
-    h1 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin-bottom: 8px;
-      text-align: center;
-      color: #38bdf8;
-    }
-    p.subtitle {
-      font-size: 0.9rem;
-      text-align: center;
-      color: #94a3b8;
-      margin-bottom: 20px;
-    }
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      background: #0f172a;
-      padding: 14px 20px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-    }
-    .control-group {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 0.95rem;
-    }
-    input[type="range"] {
-      width: 180px;
-      accent-color: #38bdf8;
-      cursor: pointer;
-    }
-    .toggle-btn {
-      padding: 6px 14px;
-      border: 1px solid #38bdf8;
-      background: transparent;
-      color: #38bdf8;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.2s;
-    }
-    .toggle-btn.active {
-      background: #38bdf8;
-      color: #0f172a;
-    }
-    .canvas-wrap {
-      position: relative;
-      height: 480px;
-      width: 100%;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Interactive Algorithm Complexity Graph</title>
+<style>
+  :root{
+    --bg:#f5f7fb;
+    --panel:#ffffff;
+    --text:#172033;
+    --muted:#667085;
+    --border:#d9deea;
+    --accent:#2563eb;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    background:var(--bg);
+    color:var(--text);
+  }
+  .app{
+    max-width:1400px;
+    margin:auto;
+    padding:24px;
+  }
+  h1{
+    margin:0 0 6px;
+    font-size:clamp(24px,3vw,38px);
+  }
+  .subtitle{
+    color:var(--muted);
+    margin-bottom:22px;
+  }
+  .layout{
+    display:grid;
+    grid-template-columns:300px 1fr;
+    gap:20px;
+    align-items:start;
+  }
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:16px;
+    box-shadow:0 10px 30px rgba(16,24,40,.06);
+  }
+  .controls{
+    padding:18px;
+    position:sticky;
+    top:16px;
+  }
+  .chart-panel{
+    padding:14px;
+    min-height:660px;
+  }
+  .control{
+    margin-bottom:18px;
+  }
+  .control-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:7px;
+  }
+  label{
+    font-size:14px;
+    font-weight:650;
+  }
+  output{
+    font-size:13px;
+    color:var(--accent);
+    font-weight:700;
+  }
+  input[type="range"]{
+    width:100%;
+    accent-color:var(--accent);
+  }
+  .curve-list{
+    border-top:1px solid var(--border);
+    padding-top:15px;
+  }
+  .curve{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    margin:10px 0;
+    font-size:14px;
+  }
+  .swatch{
+    width:24px;
+    height:4px;
+    border-radius:99px;
+    flex:0 0 24px;
+  }
+  .actions{
+    display:flex;
+    gap:8px;
+    margin-top:16px;
+  }
+  button{
+    border:1px solid var(--border);
+    background:#fff;
+    color:var(--text);
+    padding:9px 12px;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:650;
+  }
+  button:hover{background:#f8fafc}
+  canvas{
+    display:block;
+    width:100%;
+    height:620px;
+  }
+  .hint{
+    color:var(--muted);
+    font-size:12px;
+    line-height:1.45;
+    margin-top:14px;
+  }
+  @media(max-width:900px){
+    .layout{grid-template-columns:1fr}
+    .controls{position:static}
+    .chart-panel{min-height:520px}
+    canvas{height:500px}
+  }
+</style>
 </head>
 <body>
+<div class="app">
+  <h1>Algorithm Time Complexity Growth</h1>
+  <div class="subtitle">Change the variables and the graph updates instantly.</div>
 
-<div class="container">
-  <h1>Big-O Time Complexity Functions</h1>
-  <p class="subtitle">Interactive visualizer covering constant, logarithmic, polynomial, and exponential rates</p>
+  <div class="layout">
+    <aside class="panel controls">
+      <div class="control">
+        <div class="control-row">
+          <label for="nMax">Maximum input size (n)</label>
+          <output id="nMaxOut"></output>
+        </div>
+        <input id="nMax" type="range" min="4" max="100" step="1" value="16">
+      </div>
 
-  <div class="controls">
-    <div class="control-group">
-      <label for="nRange">Maximum Input Size (<strong>n = <span id="nVal">64</span></strong>):</label>
-      <input type="range" id="nRange" min="8" max="100" value="64">
-    </div>
+      <div class="control">
+        <div class="control-row">
+          <label for="yMax">Maximum Y value</label>
+          <output id="yMaxOut"></output>
+        </div>
+        <input id="yMax" type="range" min="10" max="1000" step="10" value="50">
+      </div>
 
-    <div class="control-group">
-      <span>Scale Type:</span>
-      <button class="toggle-btn" id="btnLinear" onclick="setScale('linear')">Linear</button>
-      <button class="toggle-btn active" id="btnLog" onclick="setScale('logarithmic')">Logarithmic (log₁₀)</button>
-    </div>
-  </div>
+      <div class="control">
+        <div class="control-row">
+          <label for="constant">Constant c</label>
+          <output id="constantOut"></output>
+        </div>
+        <input id="constant" type="range" min="0" max="20" step="0.5" value="1">
+      </div>
 
-  <div class="canvas-wrap">
-    <canvas id="complexityChart"></canvas>
+      <div class="control">
+        <div class="control-row">
+          <label for="logBase">Logarithm base</label>
+          <output id="logBaseOut"></output>
+        </div>
+        <input id="logBase" type="range" min="1.2" max="10" step="0.1" value="2">
+      </div>
+
+      <div class="control">
+        <div class="control-row">
+          <label for="expBase">Exponential base</label>
+          <output id="expBaseOut"></output>
+        </div>
+        <input id="expBase" type="range" min="1.1" max="4" step="0.1" value="2">
+      </div>
+
+      <div class="curve-list">
+        <strong>Show / hide curves</strong>
+        <div id="curveControls"></div>
+      </div>
+
+      <div class="actions">
+        <button id="resetBtn">Reset</button>
+        <button id="pngBtn">Save PNG</button>
+      </div>
+
+      <div class="hint">
+        Higher-order functions may leave the visible area when they exceed the selected Y limit.
+      </div>
+    </aside>
+
+    <main class="panel chart-panel">
+      <canvas id="chart"></canvas>
+    </main>
   </div>
 </div>
 
 <script>
-  let currentScale = 'logarithmic';
-  let maxN = 64;
+const canvas = document.getElementById("chart");
+const ctx = canvas.getContext("2d");
 
-  function generateData(limit) {
-    const labels = [];
-    const step = limit <= 20 ? 1 : Math.max(1, Math.floor(limit / 50));
-    
-    for (let i = 1; i <= limit; i += step) {
-      labels.push(i);
+const controls = {
+  nMax: document.getElementById("nMax"),
+  yMax: document.getElementById("yMax"),
+  constant: document.getElementById("constant"),
+  logBase: document.getElementById("logBase"),
+  expBase: document.getElementById("expBase")
+};
+
+const outputs = {
+  nMax: document.getElementById("nMaxOut"),
+  yMax: document.getElementById("yMaxOut"),
+  constant: document.getElementById("constantOut"),
+  logBase: document.getElementById("logBaseOut"),
+  expBase: document.getElementById("expBaseOut")
+};
+
+const curves = [
+  {id:"constant", label:"Constant: c", color:"#7a7a7a", dash:[8,6], fn:(n,p)=>p.c},
+  {id:"log", label:"Logarithmic: log n", color:"#00cfd5", fn:(n,p)=>Math.log(n)/Math.log(p.logBase)},
+  {id:"log2", label:"Log-squared: log² n", color:"#008b8b", fn:(n,p)=>Math.pow(Math.log(n)/Math.log(p.logBase),2)},
+  {id:"linear", label:"Linear: n", color:"#168521", fn:n=>n},
+  {id:"nlogn", label:"Linearithmic: n log n", color:"#12d61d", fn:(n,p)=>n*(Math.log(n)/Math.log(p.logBase))},
+  {id:"quadratic", label:"Quadratic: n²", color:"#f59e0b", fn:n=>n*n},
+  {id:"cubic", label:"Cubic: n³", color:"#ef2020", fn:n=>n*n*n},
+  {id:"exp", label:"Exponential: bⁿ", color:"#8b159b", fn:(n,p)=>Math.pow(p.expBase,n)}
+];
+
+const visible = Object.fromEntries(curves.map(c=>[c.id,true]));
+
+function makeCurveControls(){
+  const holder = document.getElementById("curveControls");
+  curves.forEach(c=>{
+    const row=document.createElement("label");
+    row.className="curve";
+    row.innerHTML=`
+      <input type="checkbox" data-id="${c.id}" checked>
+      <span class="swatch" style="background:${c.color}"></span>
+      <span>${c.label}</span>`;
+    holder.appendChild(row);
+  });
+
+  holder.addEventListener("change",e=>{
+    if(e.target.matches("input[type=checkbox]")){
+      visible[e.target.dataset.id]=e.target.checked;
+      draw();
     }
-    if (labels[labels.length - 1] !== limit) {
-      labels.push(limit);
-    }
+  });
+}
 
-    const c = labels.map(() => 1);
-    const logN = labels.map(n => Math.log2(n));
-    const log2N = labels.map(n => Math.pow(Math.log2(n), 2));
-    const linear = labels.map(n => n);
-    const nLogN = labels.map(n => n * Math.log2(n));
-    const quadratic = labels.map(n => Math.pow(n, 2));
-    const cubic = labels.map(n => Math.pow(n, 3));
-    const exponential = labels.map(n => Math.pow(2, n));
+function getParams(){
+  return {
+    nMax:+controls.nMax.value,
+    yMax:+controls.yMax.value,
+    c:+controls.constant.value,
+    logBase:+controls.logBase.value,
+    expBase:+controls.expBase.value
+  };
+}
 
-    return { labels, c, logN, log2N, linear, nLogN, quadratic, cubic, exponential };
+function updateOutputs(){
+  const p=getParams();
+  outputs.nMax.value=p.nMax;
+  outputs.yMax.value=p.yMax;
+  outputs.constant.value=p.c.toFixed(1).replace(".0","");
+  outputs.logBase.value=p.logBase.toFixed(1);
+  outputs.expBase.value=p.expBase.toFixed(1);
+}
+
+function fitCanvas(){
+  const rect=canvas.getBoundingClientRect();
+  const dpr=window.devicePixelRatio || 1;
+  canvas.width=Math.round(rect.width*dpr);
+  canvas.height=Math.round(rect.height*dpr);
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+
+function niceStep(max, target=5){
+  const rough=max/target;
+  const pow=Math.pow(10,Math.floor(Math.log10(rough)));
+  const n=rough/pow;
+  const nice=n>=5?5:n>=2?2:1;
+  return nice*pow;
+}
+
+function draw(){
+  updateOutputs();
+  fitCanvas();
+
+  const p=getParams();
+  const W=canvas.clientWidth;
+  const H=canvas.clientHeight;
+  const m={l:75,r:22,t:60,b:65};
+  const pw=W-m.l-m.r;
+  const ph=H-m.t-m.b;
+
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle="#fff";
+  ctx.fillRect(0,0,W,H);
+
+  ctx.font="700 22px system-ui, sans-serif";
+  ctx.fillStyle="#172033";
+  ctx.textAlign="center";
+  ctx.fillText("Algorithm Time Complexity Growth Comparison",W/2,30);
+
+  const xToPx=x=>m.l+((x-1)/(p.nMax-1))*pw;
+  const yToPx=y=>m.t+ph-(y/p.yMax)*ph;
+
+  // grid + Y ticks
+  const yStep=niceStep(p.yMax,5);
+  ctx.font="12px system-ui, sans-serif";
+  ctx.lineWidth=1;
+  for(let y=0;y<=p.yMax+1e-9;y+=yStep){
+    const py=yToPx(y);
+    ctx.strokeStyle="#d7dce5";
+    ctx.setLineDash([2,4]);
+    ctx.beginPath(); ctx.moveTo(m.l,py); ctx.lineTo(W-m.r,py); ctx.stroke();
+
+    ctx.setLineDash([]);
+    ctx.fillStyle="#475467";
+    ctx.textAlign="right";
+    ctx.textBaseline="middle";
+    ctx.fillText(String(Math.round(y*100)/100),m.l-10,py);
   }
 
-  const initialData = generateData(maxN);
-  const ctx = document.getElementById('complexityChart').getContext('2d');
+  // X grid + ticks
+  const xStep = p.nMax <= 20 ? 2 : p.nMax <= 50 ? 5 : 10;
+  for(let x=Math.ceil(1/xStep)*xStep;x<=p.nMax;x+=xStep){
+    if(x<1) continue;
+    const px=xToPx(x);
+    ctx.strokeStyle="#d7dce5";
+    ctx.setLineDash([2,4]);
+    ctx.beginPath(); ctx.moveTo(px,m.t); ctx.lineTo(px,m.t+ph); ctx.stroke();
 
-  const chart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: initialData.labels,
-      datasets: [
-        { label: 'Constant: c', data: initialData.c, borderColor: '#94a3b8', borderWidth: 2, borderDash: [5, 5], pointRadius: 0 },
-        { label: 'Logarithmic: log(n)', data: initialData.logN, borderColor: '#06b6d4', borderWidth: 2, pointRadius: 0 },
-        { label: 'Log-squared: log²(n)', data: initialData.log2N, borderColor: '#3b82f6', borderWidth: 2, pointRadius: 0 },
-        { label: 'Linear: n', data: initialData.linear, borderColor: '#22c55e', borderWidth: 2, pointRadius: 0 },
-        { label: 'Linearithmic: n log(n)', data: initialData.nLogN, borderColor: '#84cc16', borderWidth: 2, pointRadius: 0 },
-        { label: 'Quadratic: n²', data: initialData.quadratic, borderColor: '#f59e0b', borderWidth: 2, pointRadius: 0 },
-        { label: 'Cubic: n³', data: initialData.cubic, borderColor: '#ef4444', borderWidth: 2, pointRadius: 0 },
-        { label: 'Exponential: 2ⁿ', data: initialData.exponential, borderColor: '#a855f7', borderWidth: 2.5, pointRadius: 0 }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      interaction: {
-        mode: 'index',
-        intersect: false
-      },
-      plugins: {
-        legend: {
-          position: 'top',
-          labels: { color: '#e2e8f0', boxWidth: 14 }
-        },
-        tooltip: {
-          callbacks: {
-            label: function(ctx) {
-              let val = ctx.parsed.y;
-              let formatted = val > 1e6 ? val.toExponential(2) : Number(val.toFixed(2));
-              return `${ctx.dataset.label}: ${formatted}`;
-            }
-          }
+    ctx.setLineDash([]);
+    ctx.fillStyle="#475467";
+    ctx.textAlign="center";
+    ctx.textBaseline="top";
+    ctx.fillText(String(x),px,m.t+ph+10);
+  }
+
+  // axes
+  ctx.strokeStyle="#111827";
+  ctx.lineWidth=1.6;
+  ctx.setLineDash([]);
+  ctx.beginPath();
+  ctx.moveTo(m.l,m.t);
+  ctx.lineTo(m.l,m.t+ph);
+  ctx.lineTo(W-m.r,m.t+ph);
+  ctx.stroke();
+
+  // axis labels
+  ctx.fillStyle="#172033";
+  ctx.font="600 15px system-ui, sans-serif";
+  ctx.textAlign="center";
+  ctx.fillText("Input Size (n)",m.l+pw/2,H-18);
+
+  ctx.save();
+  ctx.translate(20,m.t+ph/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillText("Operations / Time (f(n))",0,0);
+  ctx.restore();
+
+  // clipping
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(m.l,m.t,pw,ph);
+  ctx.clip();
+
+  const samples=Math.max(500,Math.round(p.nMax*30));
+
+  curves.forEach(curve=>{
+    if(!visible[curve.id]) return;
+    ctx.strokeStyle=curve.color;
+    ctx.lineWidth=2.7;
+    ctx.setLineDash(curve.dash || []);
+    ctx.beginPath();
+
+    let started=false;
+    for(let i=0;i<samples;i++){
+      const n=1+(p.nMax-1)*(i/(samples-1));
+      let y=curve.fn(n,p);
+      if(!Number.isFinite(y) || y<0) continue;
+
+      const px=xToPx(n);
+      const py=yToPx(y);
+
+      // Keep a little overshoot so clipping looks natural.
+      if(y > p.yMax*1.4){
+        if(started) {
+          ctx.lineTo(px, yToPx(p.yMax*1.4));
         }
-      },
-      scales: {
-        x: {
-          title: { display: true, text: 'Input Size (n)', color: '#94a3b8' },
-          ticks: { color: '#94a3b8' },
-          grid: { color: '#334155' }
-        },
-        y: {
-          type: currentScale,
-          min: currentScale === 'logarithmic' ? 1 : 0,
-          max: currentScale === 'linear' ? 4000 : undefined,
-          title: { display: true, text: 'Operations (f(n))', color: '#94a3b8' },
-          ticks: {
+        break;
+      }
+
+      if(!started){ctx.moveTo(px,py); started=true;}
+      else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+  });
+  ctx.restore();
+  ctx.setLineDash([]);
+
+  // legend
+  const shown=curves.filter(c=>visible[c.id]);
+  const legendX=m.l+10, legendY=m.t+10;
+  const legendW=225, rowH=24, legendH=12+shown.length*rowH;
+  ctx.fillStyle="rgba(255,255,255,.92)";
+  ctx.strokeStyle="#d0d5dd";
+  ctx.lineWidth=1;
+  ctx.beginPath();
+  ctx.roundRect(legendX,legendY,legendW,legendH,8);
+  ctx.fill(); ctx.stroke();
+
+  ctx.font="13px system-ui, sans-serif";
+  shown.forEach((c,i)=>{
+    const y=legendY+18+i*rowH;
+    ctx.strokeStyle=c.color;
+    ctx.lineWidth=3;
+    ctx.setLineDash(c.dash || []);
+    ctx.beginPath();
+    ctx.moveTo(legendX+12,y);
+    ctx.lineTo(legendX+42,y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle="#1d2939";
+    ctx.textAlign="left";
+    ctx.textBaseline="middle";
+    ctx.fillText(c.label,legendX+50,y);
+  });
+}
+
+Object.values(controls).forEach(el=>el.addEventListener("input",draw));
+window.addEventListener("resize",draw);
+
+document.getElementById("resetBtn").addEventListener("click",()=>{
+  controls.nMax.value=16;
+  controls.yMax.value=50;
+  controls.constant.value=1;
+  controls.logBase.value=2;
+  controls.expBase.value=2;
+  document.querySelectorAll('#curveControls input[type="checkbox"]').forEach(cb=>{
+    cb.checked=true;
+    visible[cb.dataset.id]=true;
+  });
+  draw();
+});
+
+document.getElementById("pngBtn").addEventListener("click",()=>{
+  draw();
+  const a=document.createElement("a");
+  a.download="algorithm-complexity-graph.png";
+  a.href=canvas.toDataURL("image/png");
+  a.click();
+});
+
+makeCurveControls();
+draw();
+</script>
+</body>
+</html>
