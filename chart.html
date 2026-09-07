@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Time Complexity Growth Visualizer</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    body {
+      background-color: #0f172a;
+      color: #e2e8f0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px;
+      min-height: 100vh;
+    }
+    .container {
+      width: 100%;
+      max-width: 1050px;
+      background: #1e293b;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      text-align: center;
+      color: #38bdf8;
+    }
+    p.subtitle {
+      font-size: 0.9rem;
+      text-align: center;
+      color: #94a3b8;
+      margin-bottom: 20px;
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      background: #0f172a;
+      padding: 14px 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.95rem;
+    }
+    input[type="range"] {
+      width: 180px;
+      accent-color: #38bdf8;
+      cursor: pointer;
+    }
+    .toggle-btn {
+      padding: 6px 14px;
+      border: 1px solid #38bdf8;
+      background: transparent;
+      color: #38bdf8;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .toggle-btn.active {
+      background: #38bdf8;
+      color: #0f172a;
+    }
+    .canvas-wrap {
+      position: relative;
+      height: 480px;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Big-O Time Complexity Functions</h1>
+  <p class="subtitle">Interactive visualizer covering constant, logarithmic, polynomial, and exponential rates</p>
+
+  <div class="controls">
+    <div class="control-group">
+      <label for="nRange">Maximum Input Size (<strong>n = <span id="nVal">64</span></strong>):</label>
+      <input type="range" id="nRange" min="8" max="100" value="64">
+    </div>
+
+    <div class="control-group">
+      <span>Scale Type:</span>
+      <button class="toggle-btn" id="btnLinear" onclick="setScale('linear')">Linear</button>
+      <button class="toggle-btn active" id="btnLog" onclick="setScale('logarithmic')">Logarithmic (log₁₀)</button>
+    </div>
+  </div>
+
+  <div class="canvas-wrap">
+    <canvas id="complexityChart"></canvas>
+  </div>
+</div>
+
+<script>
+  let currentScale = 'logarithmic';
+  let maxN = 64;
+
+  function generateData(limit) {
+    const labels = [];
+    const step = limit <= 20 ? 1 : Math.max(1, Math.floor(limit / 50));
+    
+    for (let i = 1; i <= limit; i += step) {
+      labels.push(i);
+    }
+    if (labels[labels.length - 1] !== limit) {
+      labels.push(limit);
+    }
+
+    const c = labels.map(() => 1);
+    const logN = labels.map(n => Math.log2(n));
+    const log2N = labels.map(n => Math.pow(Math.log2(n), 2));
+    const linear = labels.map(n => n);
+    const nLogN = labels.map(n => n * Math.log2(n));
+    const quadratic = labels.map(n => Math.pow(n, 2));
+    const cubic = labels.map(n => Math.pow(n, 3));
+    const exponential = labels.map(n => Math.pow(2, n));
+
+    return { labels, c, logN, log2N, linear, nLogN, quadratic, cubic, exponential };
+  }
+
+  const initialData = generateData(maxN);
+  const ctx = document.getElementById('complexityChart').getContext('2d');
+
+  const chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: initialData.labels,
+      datasets: [
+        { label: 'Constant: c', data: initialData.c, borderColor: '#94a3b8', borderWidth: 2, borderDash: [5, 5], pointRadius: 0 },
+        { label: 'Logarithmic: log(n)', data: initialData.logN, borderColor: '#06b6d4', borderWidth: 2, pointRadius: 0 },
+        { label: 'Log-squared: log²(n)', data: initialData.log2N, borderColor: '#3b82f6', borderWidth: 2, pointRadius: 0 },
+        { label: 'Linear: n', data: initialData.linear, borderColor: '#22c55e', borderWidth: 2, pointRadius: 0 },
+        { label: 'Linearithmic: n log(n)', data: initialData.nLogN, borderColor: '#84cc16', borderWidth: 2, pointRadius: 0 },
+        { label: 'Quadratic: n²', data: initialData.quadratic, borderColor: '#f59e0b', borderWidth: 2, pointRadius: 0 },
+        { label: 'Cubic: n³', data: initialData.cubic, borderColor: '#ef4444', borderWidth: 2, pointRadius: 0 },
+        { label: 'Exponential: 2ⁿ', data: initialData.exponential, borderColor: '#a855f7', borderWidth: 2.5, pointRadius: 0 }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: {
+        mode: 'index',
+        intersect: false
+      },
+      plugins: {
+        legend: {
+          position: 'top',
+          labels: { color: '#e2e8f0', boxWidth: 14 }
+        },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) {
+              let val = ctx.parsed.y;
+              let formatted = val > 1e6 ? val.toExponential(2) : Number(val.toFixed(2));
+              return `${ctx.dataset.label}: ${formatted}`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          title: { display: true, text: 'Input Size (n)', color: '#94a3b8' },
+          ticks: { color: '#94a3b8' },
+          grid: { color: '#334155' }
+        },
+        y: {
+          type: currentScale,
+          min: currentScale === 'logarithmic' ? 1 : 0,
+          max: currentScale === 'linear' ? 4000 : undefined,
+          title: { display: true, text: 'Operations (f(n))', color: '#94a3b8' },
+          ticks: {
