@@ -1,0 +1,167 @@
+---
+import { getImage, Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { bounty, credentials, headlineStats, wins, type Shot } from '../data/achievements';
+
+const modules = import.meta.glob('../assets/achievements/*.webp', {
+  eager: true,
+  import: 'default',
+}) as Record<string, ImageMetadata>;
+
+async function loadShots(shots: Shot[]) {
+  const ready: { src: ImageMetadata; full: string; alt: string }[] = [];
+  for (const shot of shots) {
+    const src = modules[`../assets/achievements/${shot.file}`];
+    if (!src) continue;
+    const full = await getImage({ src, width: 1400, format: 'webp', quality: 76 });
+    ready.push({ src, full: full.src, alt: shot.alt });
+  }
+  return ready;
+}
+
+const cards = await Promise.all(wins.map(async (win) => ({ win, shots: await loadShots(win.images) })));
+---
+
+<section id="achievements" class="max-w-6xl mx-auto px-6 py-24 scroll-mt-24">
+  <h2 class="text-3xl sm:text-4xl font-light tracking-tight mb-8 text-balance">Achievements</h2>
+
+  <dl class="stat-band reveal">
+    {
+      headlineStats.map((stat) => (
+        <div>
+          <dt>{stat.label}</dt>
+          <dd class="tabular">{stat.value}</dd>
+        </div>
+      ))
+    }
+  </dl>
+
+  <article class="glass-card p-6 sm:p-8 mb-6 reveal">
+    <div class="grid gap-6 md:grid-cols-[auto_minmax(0,1fr)] md:items-end">
+      <p class="font-mono text-4xl sm:text-5xl font-bold grad-text tabular leading-none">{bounty.reward}</p>
+      <div>
+        <h3 class="text-2xl font-semibold tracking-tight">{bounty.name}</h3>
+        <p class="text-sm text-[var(--text-dim)] mt-1">
+          {bounty.program} bounty on {bounty.asset}. {bounty.severity}, {bounty.status.toLowerCase()}, accepted {bounty.accepted}.
+        </p>
+      </div>
+    </div>
+    <p class="measure text-sm text-[var(--text-dim)] leading-relaxed mt-5">{bounty.summary}</p>
+    <ul class="flex flex-wrap gap-2 mt-4">
+      {bounty.badges.map((badge) => <li class="chip !text-[0.65rem]">{badge}</li>)}
+    </ul>
+    <div class="flex flex-wrap gap-4 mt-5 text-sm">
+      {
+        bounty.links.map((link) => (
+          <a href={link.href} target="_blank" rel="noopener noreferrer" class="link-underline inline-flex items-center min-h-11">
+            {link.label}
+          </a>
+        ))
+      }
+    </div>
+  </article>
+
+  <div class="achieve-photos">
+    {
+      cards.map(({ win, shots }, i) => (
+        <article class="glass-card overflow-hidden flex flex-col reveal">
+          {
+            shots[0] ? (
+              <button
+                type="button"
+                class="win-cover"
+                data-gallery={JSON.stringify(shots.map((shot) => ({ src: shot.full, alt: shot.alt })))}
+                aria-label={`View ${shots.length} photo${shots.length === 1 ? '' : 's'} from ${win.event}`}
+              >
+                <Image src={shots[0].src} alt="" widths={[480, 800]} sizes="(max-width: 640px) 100vw, 360px" />
+                <span class="win-shade" aria-hidden="true"></span>
+                <span class="win-count">{shots.length}</span>
+              </button>
+            ) : (
+              <div class="win-placeholder">No public photo</div>
+            )
+          }
+          <div class="p-5 flex flex-col grow">
+            <p class="font-mono text-xs text-[var(--primary)]">{win.place}</p>
+            <h3 class="text-lg font-semibold mt-1">{win.event}</h3>
+            <p class="text-sm text-[var(--text-dim)] mt-1">
+              {win.team}{win.year ? `, ${win.year}` : ''}
+            </p>
+            {
+              win.proof && (
+                <a href={win.proof} target="_blank" rel="noopener noreferrer" class="link-underline text-sm mt-4">
+                  Proof
+                </a>
+              )
+            }
+          </div>
+        </article>
+      ))
+    }
+  </div>
+
+  <div class="grid gap-4 md:grid-cols-3 mt-4">
+    {
+      credentials.map((item) => (
+        <article class="glass-card p-5 reveal">
+          <p class="text-sm text-[var(--text-dim)]">{item.kicker}</p>
+          <h3 class="text-lg font-semibold mt-2">{item.title}</h3>
+          <p class="text-sm text-[var(--text-dim)] mt-1">{item.detail}</p>
+          {
+            item.href && (
+              <a href={item.href} target="_blank" rel="noopener noreferrer" class="link-underline text-sm mt-3 inline-flex">
+                CTFtime
+              </a>
+            )
+          }
+        </article>
+      ))
+    }
+  </div>
+
+  <dialog id="win-lightbox" class="lightbox">
+    <div class="lightbox-bar">
+      <button type="button" data-prev>Previous</button>
+      <button type="button" data-close>Close</button>
+    </div>
+    <figure>
+      <img alt="" />
+      <figcaption></figcaption>
+    </figure>
+    <div class="lightbox-bar">
+      <button type="button" data-next>Next</button>
+    </div>
+  </dialog>
+</section>
+
+<script>
+  const dialog = document.querySelector<HTMLDialogElement>('#win-lightbox');
+  const img = dialog?.querySelector('img');
+  const caption = dialog?.querySelector('figcaption');
+  let frames: { src: string; alt: string }[] = [];
+  let index = 0;
+
+  function show(next: number) {
+    if (!img || !caption || !frames.length) return;
+    index = (next + frames.length) % frames.length;
+    const frame = frames[index];
+    img.src = frame.src;
+    img.alt = frame.alt;
+    caption.textContent = frames.length > 1 ? `${frame.alt} (${index + 1} / ${frames.length})` : frame.alt;
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('[data-gallery]').forEach((button) => {
+    button.addEventListener('click', () => {
+      frames = JSON.parse(button.dataset.gallery || '[]');
+      show(0);
+      dialog?.showModal();
+    });
+  });
+
+  dialog?.querySelector('[data-close]')?.addEventListener('click', () => dialog.close());
+  dialog?.querySelector('[data-prev]')?.addEventListener('click', () => show(index - 1));
+  dialog?.querySelector('[data-next]')?.addEventListener('click', () => show(index + 1));
+  dialog?.addEventListener('click', (event) => {
+    if (event.target === dialog) dialog.close();
+  });
+</script>

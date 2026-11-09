@@ -2,10 +2,10 @@ export const site = {
   name: 'Achraf Ouazzani Chahidi',
   handle: 'ACHUX21',
   role: 'Web Security Specialist',
-  headline: 'Web Security Specialist · eJPT certified',
+  headline: 'Web Security Specialist · eJPTv2',
   location: 'Dalian, China',
   origin: 'Morocco',
-  email: '21@achux21.com',
+  email: '21@achux.xyz',
   url: 'https://achux.xyz',
   taglines: [
     'Break it to understand how to defend it.',
@@ -32,5 +32,5 @@ export const socials: Social[] = [
   { label: 'LinkedIn', href: 'https://linkedin.com/in/achux21', icon: 'linkedin' },
   { label: 'CTFtime', href: 'https://ctftime.org/user/150843', icon: 'ctftime' },
   { label: 'TryHackMe', href: 'https://tryhackme.com/p/achux21', icon: 'tryhackme' },
-  { label: 'Email', href: 'mailto:21@achux21.com', icon: 'mail' },
+  { label: 'Email', href: 'mailto:21@achux.xyz', icon: 'mail' },
 ];

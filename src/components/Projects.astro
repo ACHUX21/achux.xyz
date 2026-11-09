@@ -1,38 +1,68 @@
 ---
 import Icon from './Icon.astro';
 import { projects } from '../data/projects';
+
+const [lead, ...rest] = projects;
 ---
-<section id="projects" class="max-w-6xl mx-auto px-6 py-24 scroll-mt-20">
+<section id="projects" class="max-w-6xl mx-auto px-6 py-24 scroll-mt-24">
   <h2 class="font-mono text-sm text-[var(--primary)] tracking-widest uppercase mb-10 reveal">
     03 / Projects
   </h2>
-  <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-    {projects.map((p, i) => (
-      <article class="glass-card p-6 flex flex-col reveal" style={`transition-delay:${i * 50}ms`}>
+
+  {lead && (
+    <article class="glass-card p-6 sm:p-8 mb-6 reveal">
+      <div class="grid gap-6 md:grid-cols-[minmax(0,0.7fr)_minmax(0,1.3fr)] md:items-start">
+        <div>
+          <p class="font-mono text-xs text-[var(--primary)] mb-2">{lead.tagline}</p>
+          <h3 class="text-3xl font-semibold tracking-tight text-balance">{lead.name}</h3>
+        </div>
+        <div>
+          <p class="measure text-[var(--text-dim)] leading-relaxed">{lead.description}</p>
+          <ul class="flex flex-wrap gap-1.5 mt-4 mb-5">
+            {lead.tags.map((t) => <li class="chip !text-[0.65rem]">{t}</li>)}
+          </ul>
+          <div class="flex items-center gap-4 text-sm">
+            {lead.repo && (
+              <a href={lead.repo} target="_blank" rel="noopener noreferrer" class="link-underline inline-flex items-center gap-1.5 min-h-11">
+                <Icon name="github" size={16} /> Code
+              </a>
+            )}
+            {lead.live && (
+              <a href={lead.live} target="_blank" rel="noopener noreferrer" class="link-underline inline-flex items-center gap-1.5 min-h-11">
+                <Icon name="external" size={16} /> Live
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+    </article>
+  )}
+
+  <div class="grid gap-4 md:grid-cols-2">
+    {rest.map((p) => (
+      <article class="glass-card p-5 flex flex-col reveal">
         <div class="flex items-start justify-between gap-3 mb-1">
-          <h3 class="text-xl font-semibold">{p.name}</h3>
+          <h3 class="text-lg font-semibold tracking-tight">{p.name}</h3>
           {p.private && (
             <span class="chip !text-[0.65rem] shrink-0" title="Private repository">
               <Icon name="lock" size={12} class="mr-1" /> private
             </span>
           )}
         </div>
-        <p class="font-mono text-xs text-[var(--primary)] mb-3">{p.tagline}</p>
-        <p class="text-sm text-[var(--text-dim)] leading-relaxed mb-5 grow">{p.description}</p>
-        <ul class="flex flex-wrap gap-1.5 mb-5">
-          {p.tags.map((t) => <li class="chip !text-[0.65rem]">{t}</li>)}
-        </ul>
+        <p class="text-sm text-[var(--text)] mb-2">{p.tagline}</p>
+        <p class="text-sm text-[var(--text-dim)] leading-relaxed mb-4 grow">{p.description}</p>
         <div class="flex items-center gap-4 text-sm mt-auto">
           {p.repo && (
-            <a href={p.repo} target="_blank" rel="noopener noreferrer" class="link-underline inline-flex items-center gap-1.5">
+            <a href={p.repo} target="_blank" rel="noopener noreferrer" class="link-underline inline-flex items-center gap-1.5 min-h-11">
               <Icon name="github" size={16} /> Code
             </a>
           )}
           {p.live && (
-            <a href={p.live} target="_blank" rel="noopener noreferrer" class="link-underline inline-flex items-center gap-1.5">
+            <a href={p.live} target="_blank" rel="noopener noreferrer" class="link-underline inline-flex items-center gap-1.5 min-h-11">
               <Icon name="external" size={16} /> Live
             </a>
           )}
+          {!p.repo && !p.live && <span class="text-xs text-[var(--text-dim)]">Private</span>}
         </div>
       </article>
     ))}
