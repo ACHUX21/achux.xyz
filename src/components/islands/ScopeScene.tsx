@@ -3,7 +3,8 @@ import { Float } from '@react-three/drei';
 import { useEffect, useMemo, useRef } from 'react';
 import { DoubleSide, type Group } from 'three';
 
-const MINT = '#9cf3d8';
+const VIOLET = '#c4b5fd';
+const GLOW = '#c084fc';
 const RADIUS = 1.28;
 
 const NODE_SEEDS: Array<[number, number, number]> = [
@@ -68,7 +69,7 @@ function Graticule({ points, opacity }: { points: Array<[number, number, number]
       <bufferGeometry>
         <bufferAttribute attach="attributes-position" args={[position, 3]} />
       </bufferGeometry>
-      <lineBasicMaterial color={MINT} transparent opacity={opacity} />
+      <lineBasicMaterial color={VIOLET} transparent opacity={opacity} />
     </line>
   );
 }
@@ -89,7 +90,7 @@ function Globe() {
     <group>
       <mesh>
         <sphereGeometry args={[RADIUS * 0.98, 48, 32]} />
-        <meshBasicMaterial color="#12352e" transparent opacity={0.45} />
+        <meshBasicMaterial color="#2a1248" transparent opacity={0.55} />
       </mesh>
       {parallels.map((pts, i) => (
         <Graticule key={`p-${i}`} points={pts} opacity={i === 2 ? 0.7 : 0.28} />
@@ -103,7 +104,7 @@ function Globe() {
         </bufferGeometry>
         <pointsMaterial
           transparent
-          color="#e7fff6"
+          color="#f3e8ff"
           size={0.028}
           sizeAttenuation
           depthWrite={false}
@@ -114,11 +115,11 @@ function Globe() {
         <group key={i} position={position}>
           <mesh>
             <sphereGeometry args={[0.07, 16, 16]} />
-            <meshBasicMaterial color={MINT} transparent opacity={0.2} depthWrite={false} />
+            <meshBasicMaterial color={VIOLET} transparent opacity={0.2} depthWrite={false} />
           </mesh>
           <mesh>
             <sphereGeometry args={[0.026, 16, 16]} />
-            <meshBasicMaterial color="#f6fffb" />
+            <meshBasicMaterial color="#f5e9ff" />
           </mesh>
         </group>
       ))}
@@ -131,16 +132,16 @@ function ScopeRings() {
     <group>
       <mesh>
         <ringGeometry args={[1.52, 1.534, 96]} />
-        <meshBasicMaterial color={MINT} transparent opacity={0.55} side={DoubleSide} />
+        <meshBasicMaterial color={VIOLET} transparent opacity={0.55} side={DoubleSide} />
       </mesh>
       <mesh>
         <ringGeometry args={[1.7, 1.71, 96]} />
-        <meshBasicMaterial color={MINT} transparent opacity={0.22} side={DoubleSide} />
+        <meshBasicMaterial color={VIOLET} transparent opacity={0.22} side={DoubleSide} />
       </mesh>
       {[0, Math.PI / 2, Math.PI, (Math.PI * 3) / 2].map((angle) => (
         <mesh key={angle} position={[Math.cos(angle) * 1.61, Math.sin(angle) * 1.61, 0]} rotation={[0, 0, angle]}>
           <planeGeometry args={[0.012, 0.11]} />
-          <meshBasicMaterial color="#e9fff7" transparent opacity={0.75} />
+          <meshBasicMaterial color={GLOW} transparent opacity={0.8} />
         </mesh>
       ))}
     </group>
@@ -198,7 +199,7 @@ export function ScopeScene({
     <Canvas
       dpr={[1, 1.5]}
       gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
-      camera={{ position: [0, 0, 5.6], fov: 32 }}
+      camera={{ position: [0, 0, 4.85], fov: 34 }}
       frameloop={active ? 'always' : 'never'}
       style={{ width: '100%', height: '100%' }}
       onCreated={({ gl }) => {

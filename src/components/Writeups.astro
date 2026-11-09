@@ -1,6 +1,15 @@
 ---
 import { profiles } from '../data/site';
 import { writeupCount, writeups } from '../data/writeups';
+
+function mark(title: string) {
+  if (title.includes('HackTheBox')) return 'HTB';
+  if (title.includes('TryHackMe')) return 'THM';
+  if (title.includes('PearlCTF')) return 'PearlCTF';
+  if (title.includes('Root-Me')) return 'Root-Me';
+  if (title.includes('1337')) return '1337';
+  return 'Note';
+}
 ---
 
 <section id="writeups" class="section" tabindex="-1">
@@ -8,21 +17,25 @@ import { writeupCount, writeups } from '../data/writeups';
     <header class="section-head" data-reveal>
       <p class="index"><span>04</span><i></i>Notes</p>
       <h2>Writeups</h2>
-      <p class="lede">{writeupCount} published on blog.achux.xyz. A short preview — the posts live on the blog.</p>
+      <p class="lede">{writeupCount} published on blog.achux.xyz. A few from the public feed.</p>
     </header>
-    <div data-reveal>
+    <div class="note-grid">
       {
         writeups.map((post) => (
-          <a class="writeup" href={post.href} target="_blank" rel="noopener noreferrer">
-            <time datetime={post.date}>{post.date}</time>
-            <div>
-              <h3>{post.title}</h3>
-              <p>{post.summary}</p>
-            </div>
+          <a class="note-card" href={post.href} data-reveal target="_blank" rel="noopener noreferrer">
+            <span class="note-top">
+              <span class="note-mark">{mark(post.title)}</span>
+              <time datetime={post.date}>{post.date}</time>
+            </span>
+            <h3>{post.title}</h3>
+            <p>{post.summary}</p>
+            <span class="note-go">Read note</span>
           </a>
         ))
       }
     </div>
-    <a class="artifact more" href={profiles.blog} target="_blank" rel="noopener noreferrer">All notes</a>
+    <a class="btn btn-ghost more" href={profiles.blog} target="_blank" rel="noopener noreferrer">
+      All {writeupCount} notes
+    </a>
   </div>
 </section>

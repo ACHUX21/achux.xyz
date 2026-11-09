@@ -4,40 +4,53 @@ import { profiles, site } from '../data/site';
 ---
 
 <section id="top" class="hero" data-hero tabindex="-1">
+  <div class="aurora" aria-hidden="true">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
   <div class="wrap hero-grid">
     <div class="hero-copy">
-      <p class="eyebrow">{site.handle} · Lab note</p>
-      <h1>{site.name}</h1>
+      <p class="eyebrow">{site.handle} · {site.origin} · {site.location}</p>
+      <h1>
+        <span>Achraf</span>
+        <span>Ouazzani</span>
+        <span class="name-accent">Chahidi</span>
+      </h1>
       <p class="role">{site.headline}</p>
       <p class="tagline">{site.tagline}</p>
-      <p class="motto">{site.taglines[2]}</p>
       <div class="cta">
         <a class="btn btn-primary" href={profiles.resume}>Resume</a>
         <a class="btn btn-ghost" href={profiles.github} target="_blank" rel="noopener noreferrer">GitHub</a>
         <a class="btn btn-ghost" href={`mailto:${site.email}`}>{site.email}</a>
       </div>
+      <p class="hero-bio">{site.bio}</p>
+      <ul class="chip-row hero-facts">
+        {site.facts.map((fact) => <li class="chip plain">{fact}</li>)}
+        <li class="chip plain">Currently with <em>F1ux</em></li>
+      </ul>
     </div>
 
     <div class="scope-stage" aria-hidden="true">
+      <div class="scope-halo"></div>
       <div class="scope-fallback" data-scope-fallback>
         <svg viewBox="0 0 420 420" fill="none">
-          <g class="scope-spin" stroke="#9cf3d8">
-            <ellipse cx="210" cy="210" rx="92" ry="92" stroke-opacity="0.5" />
-            <ellipse cx="210" cy="210" rx="92" ry="34" stroke-opacity="0.38" />
-            <ellipse cx="210" cy="210" rx="92" ry="62" stroke-opacity="0.26" />
-            <ellipse cx="210" cy="210" rx="34" ry="92" stroke-opacity="0.32" />
-            <ellipse cx="210" cy="210" rx="62" ry="92" stroke-opacity="0.22" />
-            <circle cx="268" cy="156" r="3.1" fill="#f4fffb" stroke="none" />
-            <circle cx="150" cy="176" r="2.8" fill="#f4fffb" stroke="none" />
-            <circle cx="236" cy="274" r="3" fill="#f4fffb" stroke="none" />
-            <circle cx="164" cy="250" r="2.5" fill="#f4fffb" stroke="none" />
-            <circle cx="292" cy="214" r="2.6" fill="#f4fffb" stroke="none" />
-            <circle cx="188" cy="132" r="2.4" fill="#f4fffb" stroke="none" />
+          <g class="scope-spin" stroke="#c4b5fd">
+            <ellipse cx="210" cy="210" rx="108" ry="108" stroke-opacity="0.7" />
+            <ellipse cx="210" cy="210" rx="108" ry="40" stroke-opacity="0.45" />
+            <ellipse cx="210" cy="210" rx="108" ry="72" stroke-opacity="0.32" />
+            <ellipse cx="210" cy="210" rx="40" ry="108" stroke-opacity="0.4" />
+            <ellipse cx="210" cy="210" rx="72" ry="108" stroke-opacity="0.28" />
+            <circle cx="278" cy="148" r="4" fill="#f5e9ff" stroke="none" />
+            <circle cx="142" cy="176" r="3.4" fill="#e9d5ff" stroke="none" />
+            <circle cx="246" cy="286" r="3.6" fill="#f5e9ff" stroke="none" />
+            <circle cx="158" cy="258" r="3" fill="#e9d5ff" stroke="none" />
+            <circle cx="304" cy="214" r="3.2" fill="#f5e9ff" stroke="none" />
           </g>
-          <g stroke="#9cf3d8">
-            <circle cx="210" cy="210" r="132" stroke-opacity="0.55" />
-            <circle cx="210" cy="210" r="152" stroke-opacity="0.22" />
-            <path d="M210 52v16M210 352v16M52 210h16M352 210h16" stroke="#e7fff6" stroke-opacity="0.8" />
+          <g stroke="#c084fc">
+            <circle cx="210" cy="210" r="148" stroke-opacity="0.7" />
+            <circle cx="210" cy="210" r="168" stroke-opacity="0.28" />
+            <path d="M210 36v18M210 366v18M36 210h18M366 210h18" stroke="#e9d5ff" stroke-opacity="0.9" />
           </g>
         </svg>
       </div>

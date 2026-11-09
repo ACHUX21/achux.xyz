@@ -11,9 +11,8 @@ export type Command = {
 
 export const commands: Command[] = [
   { id: 'top', group: 'Sections', label: 'Hero', hint: 'Top', href: '#top' },
-  { id: 'subject', group: 'Sections', label: 'Subject file', hint: 'Bio', href: '#subject' },
+  { id: 'achievements', group: 'Sections', label: 'Achievements', hint: 'Wins & bounty', href: '#achievements' },
   { id: 'log', group: 'Sections', label: 'Experiment log', hint: 'EXP-001', href: '#log' },
-  { id: 'ctf', group: 'Sections', label: 'CTF & achievements', href: '#ctf' },
   { id: 'skills', group: 'Sections', label: 'Skills', href: '#skills' },
   { id: 'writeups', group: 'Sections', label: 'Writeups', hint: 'blog.achux.xyz', href: '#writeups' },
   { id: 'contact', group: 'Sections', label: 'Contact', href: '#contact' },
