@@ -1,0 +1,28 @@
+---
+import { profiles } from '../data/site';
+import { writeupCount, writeups } from '../data/writeups';
+---
+
+<section id="writeups" class="section" tabindex="-1">
+  <div class="wrap">
+    <header class="section-head" data-reveal>
+      <p class="index"><span>04</span><i></i>Notes</p>
+      <h2>Writeups</h2>
+      <p class="lede">{writeupCount} published on blog.achux.xyz. A short preview — the posts live on the blog.</p>
+    </header>
+    <div data-reveal>
+      {
+        writeups.map((post) => (
+          <a class="writeup" href={post.href} target="_blank" rel="noopener noreferrer">
+            <time datetime={post.date}>{post.date}</time>
+            <div>
+              <h3>{post.title}</h3>
+              <p>{post.summary}</p>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+    <a class="artifact more" href={profiles.blog} target="_blank" rel="noopener noreferrer">All notes</a>
+  </div>
+</section>
