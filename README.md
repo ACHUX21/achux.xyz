@@ -2,7 +2,8 @@
 
 Personal portfolio of **Achraf "ACHUX21" Ouazzani Chahidi** — Web Security Specialist.
 
-A dark lab-notebook site. Content lives in `src/data`. The hero scope is a lazy React Three Fiber island with an SVG fallback; experiment cards tilt with CSS 3D. Scroll reveals use GSAP ScrollTrigger. `⌘K` / `Ctrl K` opens the command palette.
+Single-page site with an animated violet "aurora + glass" aesthetic. Built with
+[Astro](https://astro.build) + [Tailwind CSS v4](https://tailwindcss.com).
 
 ## Develop
 
@@ -15,8 +16,14 @@ pnpm preview
 
 ## Structure
 
-- `src/data/*.ts` — site, experiments, skills, CTF, writeups, command palette.
-- `src/components/*.astro` — page sections.
-- `src/components/islands/` — React islands (scope globe, command palette).
-- `src/styles/global.css` — ink background, mint accent, hairline grid, glass.
-- `src/layouts/Base.astro` — head, view transitions, motion, palette.
+- `src/data/*.ts` — all content (single source of truth: site, skills, projects, ctf).
+  Edit these to update the site.
+- `src/components/*.astro` — page sections (Nav, Hero, About, Skills, Projects, CTF, Contact)
+  plus `Aurora` (background) and `Icon`.
+- `src/styles/global.css` — design tokens (OKLCH violet, hue 265), glass/aurora/reveal.
+- `src/layouts/Base.astro` — `<head>`, theme toggle, scroll-reveal observer.
+
+## TODO
+
+- Add `public/resume.pdf` and `public/og.png`.
+- Point the `achux.xyz` DNS at the deployment (Cloudflare Pages / Vercel).

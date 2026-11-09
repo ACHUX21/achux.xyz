@@ -1,78 +1,59 @@
 ---
-import { ctfLinks, placements, stats, teams } from '../data/ctf';
+import { achievements, teams, ctfLinks, stats } from '../data/ctf';
 ---
+<section id="ctf" class="max-w-6xl mx-auto px-6 py-24 scroll-mt-20">
+  <h2 class="font-mono text-sm text-[var(--primary)] tracking-widest uppercase mb-10 reveal">
+    04 / CTF &amp; Achievements
+  </h2>
 
-<section id="ctf" class="section" tabindex="-1">
-  <div class="wrap">
-    <header class="section-head" data-reveal>
-      <p class="index"><span>02</span><i></i>Field notes</p>
-      <h2>CTF & achievements</h2>
-      <p class="lede">Placements with a public proof where one exists.</p>
-    </header>
+  <!-- Stats -->
+  <div class="grid grid-cols-3 gap-4 mb-8">
+    {stats.map((s, i) => (
+      <div class="glass-card p-5 text-center reveal" style={`transition-delay:${i * 60}ms`}>
+        <div class="font-mono text-3xl sm:text-4xl font-bold grad-text">{s.value}</div>
+        <div class="text-xs text-[var(--text-dim)] mt-1">{s.label}</div>
+      </div>
+    ))}
+  </div>
 
-    <div class="stats">
-      {
-        stats.map((stat) => (
-          <div class="glass stat" data-reveal>
-            <b>{stat.value}</b>
-            <span>{stat.label}</span>
-          </div>
-        ))
-      }
+  <div class="grid gap-6 md:grid-cols-2">
+    <!-- Placements -->
+    <div class="glass-card p-6 reveal">
+      <h3 class="font-mono text-xs uppercase tracking-wider text-[var(--text-dim)] mb-4">
+        Placements
+      </h3>
+      <ul class="space-y-3">
+        {achievements.map((a) => (
+          <li class="flex items-baseline gap-3">
+            <span class="text-lg w-6 shrink-0">{a.medal ?? '•'}</span>
+            <span>
+              <strong>{a.place}</strong> — {a.event}
+              {a.year && <span class="text-[var(--text-dim)]"> ({a.year})</span>}
+            </span>
+          </li>
+        ))}
+      </ul>
     </div>
 
-    <div class="glass panel" data-reveal>
-      <h3>Placements</h3>
-      {
-        placements.map((item) => (
-          <article class="place">
-            <p class="place-rank">{item.place}</p>
-            <div>
-              <h3>{item.event}</h3>
-              <p>
-                {[item.team, item.year].filter(Boolean).join(' · ') || 'Team not listed'}
-              </p>
-            </div>
-            {item.proof ? (
-              <a class="artifact" href={item.proof.href} target="_blank" rel="noopener noreferrer">
-                {item.proof.label}
-              </a>
-            ) : (
-              <span class="quiet">—</span>
-            )}
-          </article>
-        ))
-      }
-
-      <p class="team-label">Teams</p>
-      <ul class="team-row">
-        {
-          teams.map((team) => (
-            <li>
-              {team.href ? (
-                <a class="chip" href={team.href} target="_blank" rel="noopener noreferrer">
-                  {team.name}
-                  {team.current && <em>current</em>}
-                </a>
-              ) : (
-                <span class="chip">{team.name}</span>
-              )}
-            </li>
-          ))
-        }
+    <!-- Teams + links -->
+    <div class="glass-card p-6 reveal" style="transition-delay:80ms">
+      <h3 class="font-mono text-xs uppercase tracking-wider text-[var(--text-dim)] mb-4">
+        Teams
+      </h3>
+      <ul class="flex flex-wrap gap-2 mb-6">
+        {teams.map((t) => <li class="chip !text-sm !py-1.5">{t}</li>)}
       </ul>
-
-      <p class="team-label">Profiles</p>
-      <ul class="link-row">
-        {
-          ctfLinks.map((link) => (
-            <li>
-              <a class="artifact" href={link.href} target="_blank" rel="noopener noreferrer">
-                {link.label}
-              </a>
-            </li>
-          ))
-        }
+      <h3 class="font-mono text-xs uppercase tracking-wider text-[var(--text-dim)] mb-3">
+        Profiles
+      </h3>
+      <ul class="space-y-2 text-sm">
+        {ctfLinks.map((l) => (
+          <li>
+            <a href={l.href} target="_blank" rel="noopener noreferrer" class="link-underline">
+              {l.label}
+            </a>
+          </li>
+        ))}
       </ul>
     </div>
   </div>

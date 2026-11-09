@@ -1,0 +1,16 @@
+---
+import { site } from '../data/site';
+---
+<section id="about" class="max-w-4xl mx-auto px-6 py-24 scroll-mt-20">
+  <div class="reveal">
+    <h2 class="font-mono text-sm text-[var(--primary)] tracking-widest uppercase mb-3">
+      01 / About
+    </h2>
+    <p class="text-2xl sm:text-3xl leading-relaxed font-light mb-8">
+      {site.bio}
+    </p>
+    <ul class="flex flex-wrap gap-2.5">
+      {site.facts.map((f) => <li class="chip !text-sm !py-1.5">{f}</li>)}
+    </ul>
+  </div>
+</section>
