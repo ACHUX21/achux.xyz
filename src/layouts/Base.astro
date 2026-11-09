@@ -23,7 +23,7 @@ const canonical = new URL(Astro.url.pathname, site.url).href;
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <meta name="author" content={site.name} />
-    <meta name="theme-color" content="#161210" />
+    <meta name="theme-color" content="#1a1428" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
@@ -40,6 +40,7 @@ const canonical = new URL(Astro.url.pathname, site.url).href;
     </script>
   </head>
   <body>
+    <a class="skip" href="#content">Skip to content</a>
     <Aurora />
     <slot />
     <div class="crt crt-flicker" aria-hidden="true"></div>
