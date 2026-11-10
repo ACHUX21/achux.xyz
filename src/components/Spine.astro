@@ -62,23 +62,34 @@
 
   const depthLinks = [...document.querySelectorAll('[data-depth]')];
   const navLinks = [...document.querySelectorAll('.nav [data-section]')];
-  const watch = sectionIds
-    .map((id) => document.getElementById(id))
-    .filter(Boolean);
-  const observer = new IntersectionObserver((entries) => {
-    const visible = entries
-      .filter((entry) => entry.isIntersecting)
-      .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-    if (!visible) return;
-    const id = visible.target.id;
+  const layerNow = document.getElementById('layer-now');
+
+  function markSection() {
+    const nav = document.querySelector('.nav');
+    const marker = window.scrollY + (nav ? nav.getBoundingClientRect().height : 0) + 24;
+    let current = sectionIds[0];
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const top = el.getBoundingClientRect().top + window.scrollY;
+      if (top <= marker) current = id;
+    });
     depthLinks.forEach((link) => {
-      link.setAttribute('aria-current', link.getAttribute('data-depth') === id ? 'true' : 'false');
+      link.setAttribute('aria-current', link.getAttribute('data-depth') === current ? 'true' : 'false');
     });
     navLinks.forEach((link) => {
-      const on = link.getAttribute('data-section') === id;
-      if (on) link.setAttribute('aria-current', 'true');
+      if (link.getAttribute('data-section') === current) link.setAttribute('aria-current', 'true');
       else link.removeAttribute('aria-current');
     });
-  }, { rootMargin: '-35% 0px -45% 0px', threshold: [0.1, 0.25, 0.5] });
-  watch.forEach((el) => observer.observe(el));
+    const match = depthLinks.find((link) => link.getAttribute('data-depth') === current);
+    if (layerNow && match) {
+      const n = match.querySelector('.depth__n');
+      const name = match.querySelector('.depth__name');
+      layerNow.textContent = `${n ? n.textContent : ''} ${name ? name.textContent : ''}`.trim();
+    }
+  }
+
+  markSection();
+  window.addEventListener('scroll', markSection, { passive: true });
+  window.addEventListener('resize', markSection);
 </script>
