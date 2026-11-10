@@ -2,8 +2,12 @@ export type SkillGroup = { category: string; items: string[] };
 
 export const skills: SkillGroup[] = [
   {
-    category: 'Offensive Security',
-    items: ['Penetration Testing', 'Web App Security (OWASP)', 'Vulnerability Research', 'Exploit Dev', 'CTF'],
+    category: 'Web security',
+    items: ['Penetration Testing', 'Web App Security (OWASP)', 'Vulnerability Research'],
+  },
+  {
+    category: 'CTF',
+    items: ['CTF', 'Exploit Dev'],
   },
   {
     category: 'Tooling & Recon',

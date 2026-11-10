@@ -1,34 +1,13 @@
 ---
-import Plate from './Plate.astro';
 import { projects } from '../data/projects';
-
-const featured = projects.find((p) => p.featured)!;
-const rest = projects.filter((p) => !p.featured);
 ---
 <section class="layer work" id="work" aria-labelledby="work-title">
-  <p class="chrome">LAYER:04 <span>/work</span></p>
+  <p class="chrome">LAYER:03 <span>/work</span></p>
   <div class="layer__main">
     <h2 id="work-title">Work</h2>
-    <article class="feature">
-      <Plate
-        src="/images/plate-packguard.webp"
-        width={1152}
-        height={864}
-        caption="plate 03 · packguard · scan"
-        alt="A plain wrapped package on a dark surface, crossed by a thin scan line of light."
-      />
-      <div>
-        <h3>{featured.name}</h3>
-        <p>{featured.blurb}</p>
-        <p class="stackline">{featured.stack}</p>
-        {featured.repo && (
-          <a class="rowlink" href={featured.repo} target="_blank" rel="noopener noreferrer">code →</a>
-        )}
-      </div>
-    </article>
     <ul class="rows">
-      {rest.map((p) => (
-        <li>
+      {projects.map((p) => (
+        <li class:list={{ 'is-feature': p.featured }}>
           <h3>
             {p.name}
             {p.private && <span class="badge">private</span>}
