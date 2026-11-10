@@ -1,37 +1,27 @@
 ---
-import Icon from './Icon.astro';
-import { site, socials } from '../data/site';
+import { site, contactLinks } from '../data/site';
 const year = new Date().getFullYear();
 ---
-<section id="contact" class="max-w-4xl mx-auto px-6 py-28 scroll-mt-20 text-center">
-  <div class="reveal">
-    <h2 class="font-mono text-sm text-[var(--primary)] tracking-widest uppercase mb-4">
-      05 / Contact
-    </h2>
-    <p class="text-3xl sm:text-4xl font-light mb-8">
-      Let&rsquo;s build or break something.
-    </p>
-    <a href={`mailto:${site.email}`} class="btn btn-primary text-lg">
-      <Icon name="mail" size={20} /> {site.email}
-    </a>
-
-    <div class="flex items-center justify-center gap-2 mt-10">
-      {socials.map((s) => (
-        <a
-          href={s.href}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={s.label}
-          class="p-3 rounded-full glass-card !rounded-full hover:text-[var(--primary)]"
-        >
-          <Icon name={s.icon} size={20} />
-        </a>
+<section class="layer contact" id="contact" aria-labelledby="contact-title">
+  <p class="chrome">LAYER:06 <span>/contact</span></p>
+  <div class="layer__main">
+    <h2 id="contact-title">{site.contact}</h2>
+    <ul class="links">
+      {contactLinks.map((l) => (
+        <li>
+          <a
+            href={l.href}
+            {...(l.href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+          >
+            {l.label}
+          </a>
+        </li>
       ))}
-    </div>
+    </ul>
   </div>
 </section>
 
-<footer class="max-w-6xl mx-auto px-6 py-8 border-t border-[var(--panel-border)] text-center text-sm text-[var(--text-dim)]">
-  <p class="font-mono accent-text mb-1">close the world &middot; open the nExt</p>
-  <p>© {year} {site.name} · Built with Astro</p>
+<footer class="colophon">
+  <p class="colophon__line">{site.footer}</p>
+  <p class="colophon__meta">© {year} {site.name}</p>
 </footer>

@@ -1,9 +1,8 @@
 # achux.xyz
 
-Personal portfolio of **Achraf "ACHUX21" Ouazzani Chahidi** — Web Security Specialist.
+Personal site of Achraf Ouazzani Chahidi (ACHUX21). Astro + Tailwind CSS v4.
 
-Single-page site with an animated violet "aurora + glass" aesthetic. Built with
-[Astro](https://astro.build) + [Tailwind CSS v4](https://tailwindcss.com).
+The page is a stack of layers: a Dalian plate, a blank clay figure, and a protocol log of the CTF record, the Viator bounty, and the work.
 
 ## Develop
 
@@ -16,14 +15,9 @@ pnpm preview
 
 ## Structure
 
-- `src/data/*.ts` — all content (single source of truth: site, skills, projects, ctf).
-  Edit these to update the site.
-- `src/components/*.astro` — page sections (Nav, Hero, About, Skills, Projects, CTF, Contact)
-  plus `Aurora` (background) and `Icon`.
-- `src/styles/global.css` — design tokens (OKLCH violet, hue 265), glass/aurora/reveal.
-- `src/layouts/Base.astro` — `<head>`, theme toggle, scroll-reveal observer.
+- `src/data/*.ts` — copy and records (site, skills, projects, record).
+- `src/components/*.astro` — nav, hero, whoami, record, bounty, work, stack, contact.
+- `src/styles/global.css` — hue-300 tokens and the Wired layout.
+- `public/images/` — generated plates and the figure passes.
 
-## TODO
-
-- Add `public/resume.pdf` and `public/og.png`.
-- Point the `achux.xyz` DNS at the deployment (Cloudflare Pages / Vercel).
+Public email is `21@achux.xyz`.
