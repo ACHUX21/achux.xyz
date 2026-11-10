@@ -1,5 +1,5 @@
 ---
-import Protocol from './Protocol.astro';
+import SectionHead from './SectionHead.astro';
 import { site, hostOf } from '../data/site';
 import {
   placements,
@@ -30,53 +30,28 @@ const byYear = timelineYears.map((year) => ({
 }));
 ---
 <section class="record" id="record" aria-labelledby="record-title">
+  <SectionHead path="/record" status={`${ctfCount} events`} layer="02" headingId="record-title">Record</SectionHead>
   <div class="feature">
     <div class="feature__copy">
-      <Protocol path="/record" status={`${ctfCount} events`} layer="02" />
-      <p class="feature__index">01</p>
-      <h2 id="record-title">Record</h2>
       <p>Three firsts in 2025 with PLOTONEA. Second in the Cyber Odyssey 2024 open division with L3AK MA.</p>
       <a class="btn" href="#record-marks">Placements</a>
     </div>
     <div class="screen" id="record-marks">
-    <ul class="places">
-      {placeMarks.map((p) => (
-        <li>
-          <span class="giant__num">{p.word}</span>
-          <span class="giant__meta">{p.meta}</span>
-          {p.prize && <span class="amount">{p.prize}</span>}
-        </li>
-      ))}
-    </ul>
-    <p class="minor">{htb.place} · {htb.event} · {htb.team} · {htb.date}</p>
-    <p class="fine">{prizeNote}</p>
+      <ul class="places">
+        {placeMarks.map((p) => (
+          <li>
+            <span class="giant__num">{p.word}</span>
+            <span class="giant__meta">{p.meta}</span>
+            {p.prize && <span class="amount">{p.prize}</span>}
+          </li>
+        ))}
+      </ul>
+      <p class="minor">{htb.place} · {htb.event} · {htb.team} · {htb.date}</p>
+      <p class="fine">{prizeNote}</p>
     </div>
   </div>
 
-  <div class="findings-block" id="findings">
-    <p class="feature__index">02</p>
-    <h2>Findings</h2>
-    <ul class="pair">
-      <li>
-        <h3>Viator <span>{viator.severity}</span></h3>
-        <p>Bugcrowd ACH21</p>
-        <p>accepted {viator.accepted}</p>
-        <p>{site.bountyIntro}</p>
-        <p class="amount">{viator.award}</p>
-        {viator.profile && <a class="btn" href={viator.profile}>Bugcrowd profile</a>}
-      </li>
-      <li>
-        <h3>{p4.program} <span>{p4.severity}</span></h3>
-        <p>{p4.note}</p>
-        <p class="amount">{p4.award}</p>
-      </li>
-    </ul>
-  </div>
-
   <div class="line">
-    <svg class="line__wire" viewBox="0 0 1200 36" preserveAspectRatio="none" aria-hidden="true">
-      <path d="M0 8 C 160 8, 220 30, 400 24 S 720 4, 920 18 S 1100 32, 1200 12" />
-    </svg>
     <div class="line__years">
       {byYear.map((col) => (
         <div>
@@ -86,15 +61,12 @@ const byYear = timelineYears.map((year) => ({
               <li>
                 <time>{m.when}</time>
                 {m.href ? (
-                  <a href={m.href} target="_blank" rel="noopener noreferrer">{m.title} <span class="out__host">{hostOf(m.href)}</span></a>
+                  <a class="with-host" href={m.href} target="_blank" rel="noopener noreferrer">
+                    <span>{m.title}</span>
+                    <span class="out__host">{hostOf(m.href)}</span>
+                  </a>
                 ) : (
                   <span>{m.title}</span>
-                )}
-                {m.title.startsWith('1337') && (
-                  <>
-                    {' '}
-                    <a href="https://blog.achux.xyz" target="_blank" rel="noopener noreferrer">blog</a>
-                  </>
                 )}
                 {m.amount && <span class="amount">{m.amount}</span>}
               </li>
@@ -107,10 +79,7 @@ const byYear = timelineYears.map((year) => ({
       {undatedMarks.map((m) => (
         <li>
           <span>{m.title}</span>
-          <span>
-            {m.note}
-            {m.amount && <span class="amount">{m.amount}</span>}
-          </span>
+          {m.note && <span> · {m.note}</span>}
         </li>
       ))}
     </ul>
@@ -122,9 +91,31 @@ const byYear = timelineYears.map((year) => ({
         <span class="teams__name">{t.name}</span>
         <span>{t.status}</span>
         {t.links?.map((l) => (
-          <a href={l.href} target="_blank" rel="noopener noreferrer">{l.label} <span class="out__host">{hostOf(l.href)}</span></a>
+          <a class="with-host" href={l.href} target="_blank" rel="noopener noreferrer">
+            <span>{l.label}</span>
+            <span class="out__host">{hostOf(l.href)}</span>
+          </a>
         ))}
       </li>
     ))}
+  </ul>
+</section>
+
+<section class="bugs" id="bugs" aria-labelledby="bugs-title">
+  <SectionHead path="/bugs" status="ACH21" layer="03" headingId="bugs-title">Bugs</SectionHead>
+  <ul class="pair">
+    <li>
+      <h3>Viator <span>{viator.severity}</span></h3>
+      <p>Bugcrowd ACH21</p>
+      <p>accepted {viator.accepted}</p>
+      <p>{site.bountyIntro}</p>
+      <p class="amount">{viator.award}</p>
+      {viator.profile && <a class="btn" href={viator.profile}>Bugcrowd profile</a>}
+    </li>
+    <li>
+      <h3>{p4.program} <span>{p4.severity}</span></h3>
+      <p>{p4.note}</p>
+      <p class="amount">{p4.award}</p>
+    </li>
   </ul>
 </section>

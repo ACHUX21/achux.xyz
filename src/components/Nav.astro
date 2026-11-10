@@ -10,6 +10,7 @@ import { navLinks } from '../data/site';
           <a href={l.href} data-section={l.id}>{l.label}</a>
         ))}
       </div>
+      <button class="cli-open" id="cli-open" type="button" aria-label="Open command line">&gt;_</button>
       <button
         id="nav-open"
         class="nav__menu"
@@ -23,11 +24,11 @@ import { navLinks } from '../data/site';
   </div>
   <p class="signal" id="signal">
     <span class="signal__dot" aria-hidden="true"></span>
-    <time class="clock" id="clock" datetime="" aria-label="Current time in Dalian, UTC+8">--:--:--</time>
+    <time class="clock" id="clock" datetime="" aria-label="Current time, UTC+8">--:--:--</time>
     <span>UTC+8</span>
     <span id="signal-proto"></span>
     <span id="signal-ms"></span>
-    <span class="layer-now" id="layer-now">LAYER:00 plate</span>
+    <span class="layer-now" id="layer-now">LAYER:00 hero</span>
   </p>
 </nav>
 

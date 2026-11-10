@@ -1,5 +1,5 @@
 ---
-import Protocol from './Protocol.astro';
+import SectionHead from './SectionHead.astro';
 import { hostOf } from '../data/site';
 import { projects } from '../data/projects';
 import { cases } from '../data/cases';
@@ -18,21 +18,14 @@ const featured = projects.find((project) => project.featured)!;
 const rest = projects.filter((project) => !project.featured);
 ---
 <section class="work" id="work" aria-labelledby="work-title">
-  <div class="feature feature--flip">
-    <div class="screen">
-      <p class="screen__label">{featured.stack}</p>
-      <p class="finding__title">{featured.name}</p>
-    </div>
-    <div class="feature__copy">
-      <Protocol path="/work" status={`${projects.length} projects`} layer="03" />
-      <p class="feature__index">03</p>
-      <h2 id="work-title">{featured.name}</h2>
-      <p>{featured.blurb}</p>
-      {featured.repo && (
-        <a class="btn" href={featured.repo} target="_blank" rel="noopener noreferrer">Code</a>
-      )}
-    </div>
-  </div>
+  <SectionHead path="/work" status={`${projects.length} projects`} layer="04" headingId="work-title">{featured.name}</SectionHead>
+  <p class="work__blurb">{featured.blurb}</p>
+  {featured.repo && (
+    <p class="btn-line">
+      <a class="btn" href={featured.repo} target="_blank" rel="noopener noreferrer">Code</a>
+      <span class="out__host">{hostOf(featured.repo)}</span>
+    </p>
+  )}
   <ul class="projects">
     {rest.map((p) => (
       <li>
@@ -44,23 +37,28 @@ const rest = projects.filter((project) => !project.featured);
         <p class="projects__stack">{p.stack}</p>
         <p class="projects__links">
           {p.repo && (
-            <a href={p.repo} target="_blank" rel="noopener noreferrer">code <span class="out__host">{hostOf(p.repo)}</span></a>
+            <a class="with-host" href={p.repo} target="_blank" rel="noopener noreferrer">
+              <span>code</span>
+              <span class="out__host">{hostOf(p.repo)}</span>
+            </a>
           )}
           {p.live && (
-            <a href={p.live} target="_blank" rel="noopener noreferrer">site <span class="out__host">{hostOf(p.live)}</span></a>
+            <a class="with-host" href={p.live} target="_blank" rel="noopener noreferrer">
+              <span>site</span>
+              <span class="out__host">{hostOf(p.live)}</span>
+            </a>
           )}
         </p>
       </li>
     ))}
   </ul>
+</section>
 
+<section class="writeups" id="writeups" aria-labelledby="writeups-title">
+  <SectionHead path="/writeups" status={`${cases.length} requests`} layer="05" headingId="writeups-title">Writeups</SectionHead>
   <div class="cases">
-    <div class="feature__copy">
-      <p class="feature__index">04</p>
-      <h3 class="cases__label">Writeups</h3>
-    </div>
-    {cases.map((c, i) => (
-      <article class:list={['case', i === 1 && 'case--flip']}>
+    {cases.map((c) => (
+      <article class="case">
         <header>
           <p>{c.event}</p>
           <h3>

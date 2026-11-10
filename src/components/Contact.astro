@@ -1,15 +1,14 @@
 ---
-import Protocol from './Protocol.astro';
+import SectionHead from './SectionHead.astro';
 import { site, contactLinks, hostOf } from '../data/site';
 const year = new Date().getFullYear();
 ---
 <section class="contact" id="contact" aria-labelledby="contact-title">
-  <Protocol path="/contact" status={site.email} layer="04" />
-  <div class="feature">
-    <div class="feature__copy">
-      <h2 id="contact-title">
+  <div class="contact__grid">
+    <div>
+      <SectionHead path="/contact" status={site.email} layer="06" headingId="contact-title">
         <a href="mailto:21@achux.xyz">21@achux.xyz</a>
-      </h2>
+      </SectionHead>
       <p>{site.contact}</p>
       <form class="mail" id="mail-form">
         <label>Name <input name="name" type="text" autocomplete="name" /></label>
@@ -17,14 +16,17 @@ const year = new Date().getFullYear();
         <button class="btn" type="submit">Send</button>
       </form>
     </div>
+    <ul class="contact__links">
+      {contactLinks.map((l) => (
+        <li>
+          <a href={l.href} target="_blank" rel="noopener noreferrer">
+            <span>{l.label}</span>
+            <span class="out__host">{hostOf(l.href)}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
   </div>
-  <ul>
-    {contactLinks.map((l) => (
-      <li>
-        <a href={l.href} target="_blank" rel="noopener noreferrer">{l.label} <span class="out__host">{hostOf(l.href)}</span></a>
-      </li>
-    ))}
-  </ul>
 </section>
 
 <script>
@@ -40,7 +42,5 @@ const year = new Date().getFullYear();
 </script>
 
 <footer class="colophon">
-  <p class="colophon__quote">{site.quote}</p>
-  <p>F1ux bio · ACHUX21 · Member</p>
   <p>© {year} {site.name}</p>
 </footer>

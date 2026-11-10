@@ -25,6 +25,8 @@ import Command from '../components/Command.astro';
 </Base>
 
 <script>
+  import { layers } from '../data/site';
+
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   document.querySelectorAll('.feature').forEach((feature) => {
     if (reduce) return;
@@ -34,4 +36,25 @@ import Command from '../components/Command.astro';
     }, { threshold: 0.15 });
     observer.observe(feature);
   });
+
+  const layerNow = document.getElementById('layer-now');
+  function markLayer() {
+    const line = window.scrollY + 110;
+    let current = layers[0];
+    for (const layer of layers) {
+      const el = document.getElementById(layer.id);
+      if (!el) continue;
+      const top = el.getBoundingClientRect().top + window.scrollY;
+      if (top <= line) current = layer;
+    }
+    document.querySelectorAll('[data-section], [data-depth]').forEach((node) => {
+      const id = node.getAttribute('data-section') || node.getAttribute('data-depth');
+      if (id === current.id) node.setAttribute('aria-current', 'true');
+      else node.removeAttribute('aria-current');
+    });
+    if (layerNow) layerNow.textContent = `LAYER:${current.n} ${current.name}`;
+  }
+  markLayer();
+  document.addEventListener('scroll', markLayer, { passive: true });
+  window.addEventListener('resize', markLayer);
 </script>

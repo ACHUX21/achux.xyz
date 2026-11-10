@@ -18,14 +18,24 @@ export const site = {
   quote: 'meow~ lost in the wired',
 };
 
+export type Layer = { id: string; n: string; name: string; path: string };
+
+/** Section numbers and LAYER labels. One scheme, no repeated names. */
+export const layers: Layer[] = [
+  { id: 'top', n: '00', name: 'hero', path: '/' },
+  { id: 'whoami', n: '01', name: 'whoami', path: '/whoami' },
+  { id: 'record', n: '02', name: 'record', path: '/record' },
+  { id: 'bugs', n: '03', name: 'bugs', path: '/bugs' },
+  { id: 'work', n: '04', name: 'work', path: '/work' },
+  { id: 'writeups', n: '05', name: 'writeups', path: '/writeups' },
+  { id: 'contact', n: '06', name: 'contact', path: '/contact' },
+];
+
 export type NavLink = { label: string; href: string; id: string };
 
-export const navLinks: NavLink[] = [
-  { label: '/whoami', href: '/#whoami', id: 'whoami' },
-  { label: '/record', href: '/#record', id: 'record' },
-  { label: '/work', href: '/#work', id: 'work' },
-  { label: '/contact', href: '/#contact', id: 'contact' },
-];
+export const navLinks: NavLink[] = layers
+  .filter((layer) => layer.id !== 'top')
+  .map((layer) => ({ label: layer.path, href: `/#${layer.id}`, id: layer.id }));
 
 export function hostOf(href: string): string {
   if (href.startsWith('mailto:')) return href.slice('mailto:'.length);
