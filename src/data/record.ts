@@ -3,7 +3,7 @@ export type Placement = {
   event: string;
   team: string;
   date: string;
-  /** Team prize in Moroccan dirhams, when a figure was actually published. */
+  /** Team prize. Shown only as small metadata, never as a headline. */
   prize?: string;
 };
 
@@ -21,7 +21,7 @@ export const placements: Placement[] = [
   { place: '14th', event: 'HTB Cyber Apocalypse 2024: Hacker Royale', team: 'L3ak', date: '2024' },
 ];
 
-export const prizeNote = 'Amounts are the team prize in Moroccan dirhams.';
+export const prizeNote = 'DH amounts are team prizes.';
 
 export type Credit = {
   event: string;
@@ -191,8 +191,6 @@ export type Bounty = {
   accepted?: string;
   profile?: string;
   profileLabel?: string;
-  source?: string;
-  sourceLabel?: string;
   note?: string;
 };
 
@@ -206,9 +204,6 @@ export const bounties: Bounty[] = [
     accepted: '10 Aug 2026',
     profile: 'https://bugcrowd.com/h/ACH21',
     profileLabel: 'bugcrowd.com/h/ACH21',
-    source: 'https://bugrater.com/activity/262',
-    sourceLabel: 'bugrater.com/activity/262',
-    note: 'BugRater notes this is the largest award Viator has published there.',
   },
   {
     program: 'Undisclosed Moroccan company',
@@ -237,6 +232,8 @@ export type TimelineMark = {
   when: string;
   title: string;
   href?: string;
+  /** Small figure under the mark. Not a headline. */
+  amount?: string;
 };
 
 /** Dated marks already on this site. The 16 same-day 1337 posts are one entry. */
@@ -269,7 +266,12 @@ export const timeline: TimelineMark[] = [
     title: 'USC-CTF — SQLite3 injection via UPSERT',
     href: post('usc-spookyql'),
   },
-  { year: '2024', when: 'Dec 2024', title: '2nd, open division · Cyber Odyssey 2024 · L3AK MA · 40,000 DH' },
+  {
+    year: '2024',
+    when: 'Dec 2024',
+    title: '2nd, open division · Cyber Odyssey 2024 · L3AK MA',
+    amount: '40,000 DH',
+  },
   {
     year: '2024',
     when: 'Dec 2024',
@@ -281,28 +283,29 @@ export const timeline: TimelineMark[] = [
     title: 'PearlCTF — SSRF to Docker socket → container escape',
     href: post('pearlctf'),
   },
-  { year: '2025', when: 'Apr 2025', title: '1st · MCSC v12 · PLOTONEA · 15,000 DH' },
-  { year: '2025', when: 'Apr 2025', title: '1st · IDEH v6 CTF · PLOTONEA · 9,000 DH' },
-  { year: '2025', when: 'May 2025', title: '1st · AISEC CTF · PLOTONEA · 16,000 DH' },
+  { year: '2025', when: 'Apr 2025', title: '1st · MCSC v12 · PLOTONEA', amount: '15,000 DH' },
+  { year: '2025', when: 'Apr 2025', title: '1st · IDEH v6 CTF · PLOTONEA', amount: '9,000 DH' },
+  { year: '2025', when: 'May 2025', title: '1st · AISEC CTF · PLOTONEA', amount: '16,000 DH' },
   {
     year: '2026',
     when: '27 Jun 2026',
     title: `1337 Local CTF — ${localCtfWriteups.length} posts. ${firstBlood.text}`,
     href: firstBlood.href,
   },
-  { year: '2026', when: '10 Aug 2026', title: 'Viator · high · $2,150 USD · Bugcrowd as ACH21' },
+  { year: '2026', when: '10 Aug 2026', title: 'Viator · High · Bugcrowd as ACH21', amount: '$2,150 USD' },
 ];
 
 export const timelineYears = ['2023', '2024', '2025', '2026'] as const;
 
 /** On the record, with no date published on the site. */
-export const undatedMarks: { title: string; note: string }[] = [
+export const undatedMarks: { title: string; note: string; amount?: string }[] = [
   {
     title: 'ISGI Casablanca / OFPPT',
     note: 'Organized and built the challenges for the school CTF.',
   },
   {
-    title: 'P4 · $150 USD',
-    note: 'Undisclosed Moroccan company. Unpublished. The company name is not shared.',
+    title: 'Undisclosed Moroccan company',
+    note: 'P4. Unpublished. The company name is not shared.',
+    amount: '$150 USD',
   },
 ];

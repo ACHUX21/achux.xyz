@@ -10,8 +10,15 @@ import {
   teams,
 } from '../data/record';
 
-const odyssey = placements.find((p) => p.event.startsWith('Cyber Odyssey'))!;
-const firsts = placements.filter((p) => p.place === '1st');
+const placeMarks = placements
+  .filter((p) => p.place.startsWith('1st') || p.place.startsWith('2nd'))
+  .map((p) => ({
+    word: p.place.startsWith('2nd') ? '2nd' : p.place,
+    meta: p.place.startsWith('2nd')
+      ? `open division · ${p.event} · ${p.team} · ${p.date}`
+      : `${p.event} · ${p.team} · ${p.date}`,
+    prize: p.prize,
+  }));
 const htb = placements.find((p) => p.place.startsWith('14'))!;
 const viator = bounties[0];
 const p4 = bounties[1];
@@ -24,34 +31,35 @@ const byYear = timelineYears.map((year) => ({
   <h2 id="record-title" class="visually-hidden">Record</h2>
 
   <div class="marks">
-    <div class="marks__giants">
-      <p class="giant">
-        <span class="giant__num">{odyssey.prize}</span>
-        <span class="giant__meta">{odyssey.place} · {odyssey.event} · {odyssey.team} · {odyssey.date}</span>
-      </p>
-      <p class="giant">
-        <span class="giant__num">{viator.award.replace(' USD', '')}</span>
-        <span class="giant__meta">{viator.program} · {viator.severity} · {viator.accepted}</span>
-      </p>
-    </div>
-    <p class="fine">{prizeNote}</p>
-    <ul class="firsts">
-      {firsts.map((p) => (
+    <ul class="places">
+      {placeMarks.map((p) => (
         <li>
-          <span class="firsts__num">{p.prize}</span>
-          <span>{p.place} · {p.event} · {p.team} · {p.date}</span>
+          <span class="giant__num">{p.word}</span>
+          <span class="giant__meta">{p.meta}</span>
+          {p.prize && <span class="amount">{p.prize}</span>}
         </li>
       ))}
     </ul>
     <p class="minor">{htb.place} · {htb.event} · {htb.team} · {htb.date}</p>
-    <p class="minor">{p4.severity} · {p4.award} · {p4.program}. {p4.note}</p>
+    <p class="fine">{prizeNote}</p>
+
+    <ul class="findings">
+      <li>
+        <span class="finding__title">Viator <span>{viator.severity}</span></span>
+        <span class="giant__meta">Bugcrowd ACH21 · accepted {viator.accepted}</span>
+        <span class="amount">{viator.award}</span>
+      </li>
+      <li>
+        <span class="finding__title">{p4.program} <span>{p4.severity}</span></span>
+        {p4.note && <span class="giant__meta">{p4.note}</span>}
+        <span class="amount">{p4.award}</span>
+      </li>
+    </ul>
     <p class="honest">{site.bountyIntro}</p>
-    {viator.note && <p class="fine">{viator.note}</p>}
     {viator.asset && (
       <p class="fine">
         <a href={viator.asset}>{viator.asset}</a>
         {viator.profile && <> · <a href={viator.profile}>{viator.profileLabel}</a></>}
-        {viator.source && <> · <a href={viator.source}>{viator.sourceLabel}</a></>}
       </p>
     )}
   </div>
@@ -79,6 +87,7 @@ const byYear = timelineYears.map((year) => ({
                     <a href="https://blog.achux.xyz" target="_blank" rel="noopener noreferrer">blog</a>
                   </>
                 )}
+                {m.amount && <span class="amount">{m.amount}</span>}
               </li>
             ))}
           </ol>
@@ -89,7 +98,10 @@ const byYear = timelineYears.map((year) => ({
       {undatedMarks.map((m) => (
         <li>
           <span>{m.title}</span>
-          <span>{m.note}</span>
+          <span>
+            {m.note}
+            {m.amount && <span class="amount">{m.amount}</span>}
+          </span>
         </li>
       ))}
     </ul>

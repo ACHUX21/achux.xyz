@@ -277,31 +277,41 @@ img { max-width: 100%; height: auto; }
 
 /* ---------- record ---------- */
 .record { padding: clamp(3rem, 7vw, 5.5rem) var(--pad) 2rem; }
-.marks__giants {
-  display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-  gap: 1.5rem 3rem;
-  align-items: end;
+.places,
+.findings {
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
-.giant { margin: 0; }
+.places {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.75rem 1.5rem;
+  align-items: start;
+}
 .giant__num {
   display: block;
   font-style: italic;
   font-weight: 560;
-  font-size: clamp(3.4rem, 8vw, 7rem);
+  font-size: clamp(3.4rem, 7vw, 6.25rem);
   line-height: 0.86;
   letter-spacing: -0.04em;
   font-variation-settings: 'SOFT' 60, 'WONK' 1, 'opsz' 144, 'wght' 560;
 }
-.giant__meta {
+.giant__meta,
+.amount {
   display: block;
-  margin-top: 0.7rem;
-  max-width: 36ch;
+  margin-top: 0.55rem;
+  max-width: 28ch;
   font-family: var(--font-mono);
   font-size: 0.78rem;
+  font-weight: 400;
+  font-style: normal;
   line-height: 1.45;
+  letter-spacing: 0;
   color: var(--muted);
 }
+.amount { margin-top: 0.2rem; }
 .fine {
   margin: 1.1rem 0 0;
   max-width: 62ch;
@@ -311,30 +321,24 @@ img { max-width: 100%; height: auto; }
   color: var(--muted);
 }
 .fine a { color: var(--lavender); }
-.firsts {
-  list-style: none;
+.findings {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1.25rem 2rem;
-  margin: 2.4rem 0 0;
-  padding: 1.4rem 0 0;
+  grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.1fr);
+  gap: 1.5rem 3rem;
+  margin-top: 2.2rem;
+  padding-top: 1.4rem;
   border-top: 1px solid var(--line);
 }
-.firsts li { margin: 0; }
-.firsts__num {
+.finding__title {
   display: block;
   font-weight: 560;
-  font-size: clamp(1.7rem, 3vw, 2.5rem);
+  font-size: clamp(1.8rem, 3vw, 2.7rem);
   letter-spacing: -0.03em;
-  line-height: 1;
-  margin-bottom: 0.45rem;
+  line-height: 1.05;
 }
-.firsts li span:last-child {
-  display: block;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  line-height: 1.45;
-  color: var(--muted);
+.finding__title span {
+  font-style: italic;
+  font-weight: 500;
 }
 .minor {
   margin: 1.4rem 0 0;
@@ -592,8 +596,8 @@ img { max-width: 100%; height: auto; }
 
 /* ---------- breakpoints ---------- */
 @media (max-width: 900px) {
-  .marks__giants,
-  .firsts,
+  .places,
+  .findings,
   .line__years { grid-template-columns: 1fr; }
   .line__wire { display: none; }
   .projects li { grid-template-columns: 1fr; }

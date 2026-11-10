@@ -13,7 +13,7 @@ export const site = {
   about:
     'I study computer science at Dalian Polytechnic University and work IT support there. Most of my time goes into web apps: auth, access control, injection, and whatever else a request can reach.',
   bountyIntro:
-    'Viator is the published award. The program fixed it; Bugcrowd has not published the vulnerability class, so neither do I. The other is an unpublished P4 from a Moroccan company I cannot name.',
+    'The program fixed it. Bugcrowd has not published the vulnerability class, so neither do I.',
   contact: 'Scope, a target, or a CTF team slot — send it.',
   quote: 'meow~ lost in the wired',
 };
