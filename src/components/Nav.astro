@@ -1,56 +1,85 @@
 ---
 import { navLinks } from '../data/site';
+import Icon from './Icon.astro';
+
+const socials = [
+  { label: 'GitHub', href: 'https://github.com/ACHUX21', icon: 'github' },
+  { label: 'Bugcrowd', href: 'https://bugcrowd.com/h/ACH21', icon: 'bug' },
+  { label: 'CTFtime', href: 'https://ctftime.org/team/417727', icon: 'ctftime' },
+  { label: 'Blog', href: 'https://blog.achux.xyz', icon: 'blog' },
+];
 ---
-<nav class="nav" aria-label="Sections">
-  <div class="nav__row">
-    <a class="nav__brand" href="/">ACHUX21</a>
-    <div class="nav__end">
-      <div class="nav__links">
-        {navLinks.map((l) => (
-          <a href={l.href} data-section={l.id}>{l.label}</a>
-        ))}
-      </div>
-      <button class="cli-open" id="cli-open" type="button" aria-label="Open command line">&gt;_</button>
-      <button
-        id="nav-open"
-        class="nav__menu"
-        type="button"
-        aria-haspopup="dialog"
-        aria-controls="nav-dialog"
-      >
-        menu
-      </button>
-    </div>
-  </div>
-  <p class="signal" id="signal">
-    <span class="signal__dot" aria-hidden="true"></span>
+<a class="mark" href="/#top">A<span class="visually-hidden">CHUX21</span></a>
+<div class="status">
+  <p class="status__live">
     <time class="clock" id="clock" datetime="" aria-label="Current time, UTC+8">--:--:--</time>
     <span>UTC+8</span>
-    <span id="signal-proto"></span>
-    <span id="signal-ms"></span>
     <span class="layer-now" id="layer-now">LAYER:00 hero</span>
   </p>
-</nav>
+  <button class="cli-open" id="cli-open" type="button" aria-label="Open command line">&gt;_</button>
+  <button
+    class="burger"
+    id="nav-open"
+    type="button"
+    aria-expanded="false"
+    aria-controls="nav-menu"
+  >
+    <span class="burger__bar"></span>
+    <span class="burger__bar"></span>
+    <span class="burger__bar"></span>
+    <span class="visually-hidden">Open menu</span>
+  </button>
+</div>
 
-<dialog id="nav-dialog" class="menu" aria-label="Sections">
-  <form method="dialog">
-    <button type="submit">close</button>
-  </form>
-  {navLinks.map((l) => (
-    <a href={l.href} data-section={l.id}>{l.label}</a>
-  ))}
-</dialog>
+<div class="menu" id="nav-menu" aria-hidden="true">
+  <button class="menu__close" id="nav-close" type="button">Close</button>
+  <nav aria-label="Sections">
+    {navLinks.map((link) => (
+      <a href={link.href} data-section={link.id}>{link.label}</a>
+    ))}
+  </nav>
+  <ul class="menu__social">
+    {socials.map((link) => (
+      <li>
+        <a href={link.href} target="_blank" rel="noopener noreferrer" aria-label={link.label}>
+          <Icon name={link.icon} size={24} />
+        </a>
+      </li>
+    ))}
+  </ul>
+</div>
 
 <script is:inline>
-  const dialog = document.getElementById('nav-dialog');
+  const menu = document.getElementById('nav-menu');
   const openBtn = document.getElementById('nav-open');
-  openBtn.addEventListener('click', () => dialog.showModal());
-  dialog.addEventListener('click', (e) => {
-    if (e.target === dialog) dialog.close();
+  const closeBtn = document.getElementById('nav-close');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function openMenu() {
+    menu.classList.add('is-open');
+    menu.setAttribute('aria-hidden', 'false');
+    openBtn.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+    closeBtn.focus();
+  }
+
+  function closeMenu() {
+    menu.classList.remove('is-open');
+    menu.setAttribute('aria-hidden', 'true');
+    openBtn.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+    if (document.activeElement && menu.contains(document.activeElement)) openBtn.focus();
+  }
+
+  openBtn.addEventListener('click', openMenu);
+  closeBtn.addEventListener('click', closeMenu);
+  menu.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', closeMenu);
   });
-  dialog.querySelectorAll('a').forEach((a) => {
-    a.addEventListener('click', () => dialog.close());
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && menu.classList.contains('is-open')) closeMenu();
   });
+  if (reduce) menu.style.transition = 'none';
 
   const clock = document.getElementById('clock');
   if (clock) {
@@ -68,18 +97,5 @@ import { navLinks } from '../data/site';
     };
     tick();
     setInterval(tick, 1000);
-  }
-
-  const proto = document.getElementById('signal-proto');
-  const ms = document.getElementById('signal-ms');
-  if (proto) proto.textContent = location.protocol;
-  const navTiming = performance.getEntriesByType('navigation')[0];
-  if (ms && navTiming) {
-    const delta = navTiming.responseEnd - navTiming.requestStart;
-    const value = delta > 0 ? delta : navTiming.duration;
-    if (value > 0) {
-      ms.textContent = Math.round(value) + 'ms';
-      ms.title = 'navigation responseEnd − requestStart';
-    }
   }
 </script>
