@@ -1,6 +1,6 @@
 ---
 import { site, contactLinks, hostOf, layers } from '../data/site';
-import { facts, placements, bounties, ctfCount } from '../data/record';
+import { facts, placements, bounties } from '../data/record';
 
 const payload = {
   name: site.name,
@@ -11,7 +11,6 @@ const payload = {
   record: [
     ...placements.map((p) => `${p.place}  ${p.event}  ${p.team}  ${p.date}${p.prize ? '  ' + p.prize : ''}`),
     ...bounties.map((b) => `${b.program}  ${b.severity}${b.accepted ? '  ' + b.accepted : ''}${b.note ? '  ' + b.note : ''}  ${b.award}`),
-    `${ctfCount} events`,
   ],
   links: [
     { label: site.email, href: `mailto:${site.email}`, host: '' },

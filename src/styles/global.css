@@ -411,7 +411,16 @@ main { position: relative; }
   line-height: 1.65;
 }
 
-.line { margin-top: var(--section); }
+.authored {
+  margin: 1.35rem 0 0;
+  max-width: 70ch;
+  line-height: 1.6;
+}
+.authored__k {
+  margin-right: 0.6rem;
+  font-weight: 500;
+}
+.line { margin-top: 1.25rem; }
 .line__years {
   display: grid;
   grid-template-columns: minmax(0, 46rem);
