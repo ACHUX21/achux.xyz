@@ -664,6 +664,7 @@ main { position: relative; }
   border-radius: 50%;
   background: var(--signal);
 }
+.layer-now { display: none; color: var(--paper); }
 .proto {
   display: flex;
   flex-wrap: wrap;
@@ -818,14 +819,17 @@ main { position: relative; }
   .nav__links { display: none; }
   .nav .nav__menu { display: inline-flex; }
   .hero__name { width: min(9ch, 100%); }
-  .depth__name { display: none; }
-  .depth { right: 0.2rem; width: auto; }
+  .spine { display: none; }
+}
+
+@media (max-width: 768px) {
+  .depth { display: none; }
+  .layer-now { display: inline; }
   .whoami,
   .record,
   .work,
   .contact,
-  .colophon { padding-right: calc(var(--pad) + 1.4rem); }
-  .spine { display: none; }
+  .colophon { padding-right: var(--pad); }
 }
 
 @media (prefers-reduced-motion: no-preference) {
