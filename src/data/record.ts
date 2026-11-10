@@ -292,7 +292,7 @@ export const timeline: TimelineMark[] = [
     title: `1337 Local CTF — ${localCtfWriteups.length} posts. ${firstBlood.text}`,
     href: firstBlood.href,
   },
-  { year: '2026', when: '10 Aug 2026', title: 'Viator · High · Bugcrowd as ACH21', amount: '$2,150 USD' },
+  { year: '2026', when: '10 Aug 2026', title: 'Viator · Bugcrowd ACH21' },
 ];
 
 export const timelineYears = ['2023', '2024', '2025', '2026'] as const;
@@ -304,8 +304,7 @@ export const undatedMarks: { title: string; note: string; amount?: string }[] = 
     note: 'Organized and built the challenges for the school CTF.',
   },
   {
-    title: 'Undisclosed Moroccan company',
-    note: 'P4. Unpublished. The company name is not shared.',
-    amount: '$150 USD',
+    title: 'Moroccan company',
+    note: 'P4',
   },
 ];

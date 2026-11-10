@@ -1,5 +1,5 @@
 ---
-import { site, contactLinks, hostOf } from '../data/site';
+import { site, contactLinks, hostOf, layers } from '../data/site';
 import { facts, placements, bounties, ctfCount } from '../data/record';
 
 const payload = {
@@ -13,7 +13,11 @@ const payload = {
     ...bounties.map((b) => `${b.program}  ${b.severity}${b.accepted ? '  ' + b.accepted : ''}${b.note ? '  ' + b.note : ''}  ${b.award}`),
     `${ctfCount} events`,
   ],
-  links: contactLinks.map((l) => `${l.label}  ${hostOf(l.href)}`),
+  links: [
+    { label: site.email, href: `mailto:${site.email}`, host: '' },
+    ...contactLinks.map((l) => ({ label: l.label, href: l.href, host: hostOf(l.href) })),
+  ],
+  sections: layers.map((layer) => ({ id: layer.id, path: layer.path })),
 };
 ---
 <div class="cli" id="cli" hidden>
@@ -29,10 +33,32 @@ const payload = {
   const out = document.getElementById('cli-out');
   const form = document.getElementById('cli-form');
   const input = document.getElementById('cli-in');
+  const opener = document.getElementById('cli-open');
+  const helpText = ['whoami', 'ls', 'cat record', 'contact', 'cd <section>', '/<section>', 'help', 'exit', 'clear'];
 
   function print(text) {
     const line = document.createElement('p');
     line.textContent = text;
+    out.appendChild(line);
+    out.scrollTop = out.scrollHeight;
+  }
+
+  function printLink(label, href, host) {
+    const line = document.createElement('p');
+    const link = document.createElement('a');
+    link.href = href;
+    link.textContent = label;
+    if (!href.startsWith('mailto:')) {
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+    }
+    line.appendChild(link);
+    if (host) {
+      const hostEl = document.createElement('span');
+      hostEl.className = 'out__host';
+      hostEl.textContent = host;
+      line.appendChild(hostEl);
+    }
     out.appendChild(line);
     out.scrollTop = out.scrollHeight;
   }
@@ -42,9 +68,31 @@ const payload = {
     if (el) el.scrollIntoView();
   }
 
+  function sectionId(token) {
+    const t = token.trim().toLowerCase();
+    if (!t || t === '/' || t === 'top' || t === 'hero' || t === '/top') return 'top';
+    const bare = t.replace(/^\//, '');
+    const hit = payload.sections.find((section) => section.id === bare || section.path === t || section.path === `/${bare}`);
+    return hit ? hit.id : '';
+  }
+
   function run(raw) {
-    const cmd = raw.trim().toLowerCase();
-    print('> ' + raw.trim());
+    const typed = raw.trim();
+    const cmd = typed.toLowerCase();
+    print('> ' + typed);
+    if (cmd === 'help' || cmd === '?') {
+      helpText.forEach(print);
+      payload.sections.forEach((section) => print(section.path));
+      return;
+    }
+    if (cmd === 'exit' || cmd === 'quit') {
+      closeCli();
+      return;
+    }
+    if (cmd === 'clear') {
+      out.replaceChildren();
+      return;
+    }
     if (cmd === 'whoami') {
       print(payload.name);
       print(payload.email);
@@ -52,45 +100,68 @@ const payload = {
       payload.facts.forEach(print);
       print(payload.quote);
       go('whoami');
-    } else if (cmd === 'ls') {
-      print('/whoami');
-      print('/record');
-      print('/work');
-      print('/contact');
-    } else if (cmd === 'cat record') {
+      return;
+    }
+    if (cmd === 'ls') {
+      payload.sections.forEach((section) => print(section.path));
+      return;
+    }
+    if (cmd === 'cat record') {
       payload.record.forEach(print);
       go('record');
-    } else if (cmd === 'contact') {
-      print(payload.email);
-      payload.links.forEach(print);
-      go('contact');
-    } else if (cmd === 'clear') {
-      out.replaceChildren();
-    } else if (cmd === '') {
-      print('whoami, ls, cat record, contact, clear');
-    } else {
-      print('unknown. whoami, ls, cat record, contact, clear');
+      return;
     }
+    if (cmd === 'contact') {
+      payload.links.forEach((link) => printLink(link.label, link.href, link.host));
+      go('contact');
+      return;
+    }
+    if (cmd.startsWith('cd ')) {
+      const id = sectionId(cmd.slice(3));
+      if (!id) {
+        print('no such section. help');
+        return;
+      }
+      go(id);
+      return;
+    }
+    if (cmd.startsWith('/')) {
+      const id = sectionId(cmd);
+      if (!id) {
+        print('no such section. help');
+        return;
+      }
+      go(id);
+      return;
+    }
+    if (cmd === '') {
+      helpText.forEach(print);
+      return;
+    }
+    print('unknown. help');
   }
 
   function openCli() {
     root.hidden = false;
+    opener.classList.add('is-hidden');
     input.focus();
   }
 
   function closeCli() {
     root.hidden = true;
+    opener.classList.remove('is-hidden');
     input.blur();
   }
 
   document.addEventListener('keydown', (e) => {
-    const typing = document.activeElement === input;
+    const tag = document.activeElement && document.activeElement.tagName;
     if (e.key === 'Escape' && !root.hidden) {
       e.preventDefault();
       closeCli();
       return;
     }
-    if (typing) return;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+    if (document.querySelector('dialog[open]')) return;
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     if (e.key === '?' || e.key === '/') {
       e.preventDefault();
@@ -104,4 +175,6 @@ const payload = {
     input.value = '';
     run(value);
   });
+
+  opener.addEventListener('click', openCli);
 </script>

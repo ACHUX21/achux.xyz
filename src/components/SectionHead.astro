@@ -1,0 +1,16 @@
+---
+import Protocol from './Protocol.astro';
+
+interface Props {
+  path: string;
+  status?: string;
+  layer: string;
+  headingId?: string;
+}
+const { path, status, layer, headingId } = Astro.props;
+---
+<div class="section-head">
+  <Protocol path={path} status={status} layer={layer} />
+  <p class="feature__index">{layer}</p>
+  <h2 id={headingId} class="section-title"><slot /></h2>
+</div>

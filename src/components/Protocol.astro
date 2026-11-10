@@ -1,7 +1,7 @@
 ---
 interface Props {
   path: string;
-  status: string;
+  status?: string;
   layer: string;
 }
 const { path, status, layer } = Astro.props;
@@ -9,5 +9,5 @@ const { path, status, layer } = Astro.props;
 <p class="proto">
   <span class="proto__req">GET {path} HTTP/1.1</span>
   <span class="proto__layer">LAYER:{layer}</span>
-  <span class="proto__res">200 OK · {status}</span>
+  <span class="proto__res">{status ? `200 OK · ${status}` : '200 OK'}</span>
 </p>
