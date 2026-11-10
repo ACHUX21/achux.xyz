@@ -41,9 +41,7 @@ export const authored: Credit[] = [
   },
   {
     event: 'ISGI Casablanca / OFPPT',
-    detail:
-      'Organized and built the challenges for the school CTF during the Semaine régionale des métiers du digital, around May 2025.',
-    note: 'OFPPT honor, June 2025: “Cybersecurity CTF Event Organizer – ISGI” (planning, coordination, execution; certificate of appreciation). Colleagues describe conception and création des épreuves for the first OFPPT/ISGI CTF, and a Prix d’Innovation en Cybersécurité shared with Mohammed Lemfarreg and Othmane El Amini.',
+    detail: 'Organized and built the challenges for the school CTF.',
   },
   {
     event: 'GCDSTE Secure Tech × 0xNox',
