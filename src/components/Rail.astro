@@ -1,26 +1,26 @@
 ---
-import { navLinks, hostOf } from '../data/site';
+import { navLinks } from '../data/site';
+import Icon from './Icon.astro';
 
 const socials = [
-  { label: 'GitHub', href: 'https://github.com/ACHUX21' },
-  { label: 'Bugcrowd', href: 'https://bugcrowd.com/h/ACH21' },
-  { label: 'CTFtime', href: 'https://ctftime.org/team/417727' },
-  { label: 'Blog', href: 'https://blog.achux.xyz' },
+  { label: 'GitHub', href: 'https://github.com/ACHUX21', icon: 'github' },
+  { label: 'Bugcrowd', href: 'https://bugcrowd.com/h/ACH21', icon: 'bug' },
+  { label: 'CTFtime', href: 'https://ctftime.org/team/417727', icon: 'ctftime' },
+  { label: 'Blog', href: 'https://blog.achux.xyz', icon: 'blog' },
 ];
 ---
 <aside class="rail" aria-label="Page">
-  <a class="rail__brand" href="/#top">A</a>
-  <nav>
+  <a class="rail__mark" href="/#top">A<span class="visually-hidden">CHUX21</span></a>
+  <nav class="rail__nav" aria-label="Sections">
     {navLinks.map((link) => (
       <a href={link.href} data-section={link.id}>{link.label}</a>
     ))}
   </nav>
-  <ul>
+  <ul class="rail__social">
     {socials.map((link) => (
       <li>
-        <a href={link.href} target="_blank" rel="noopener noreferrer">
-          {link.label}
-          <span class="out__host">{hostOf(link.href)}</span>
+        <a href={link.href} target="_blank" rel="noopener noreferrer" aria-label={link.label}>
+          <Icon name={link.icon} size={22} />
         </a>
       </li>
     ))}

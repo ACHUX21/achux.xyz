@@ -35,7 +35,7 @@ export type NavLink = { label: string; href: string; id: string };
 
 export const navLinks: NavLink[] = layers
   .filter((layer) => layer.id !== 'top')
-  .map((layer) => ({ label: layer.path, href: `/#${layer.id}`, id: layer.id }));
+  .map((layer) => ({ label: layer.name, href: `/#${layer.id}`, id: layer.id }));
 
 export function hostOf(href: string): string {
   if (href.startsWith('mailto:')) return href.slice('mailto:'.length);
