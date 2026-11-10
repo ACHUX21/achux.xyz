@@ -1,6 +1,5 @@
 ---
 import '../styles/global.css';
-import Aurora from '../components/Aurora.astro';
 import { site } from '../data/site';
 
 interface Props {
@@ -8,8 +7,8 @@ interface Props {
   description?: string;
 }
 const {
-  title = `${site.handle} — ${site.role}`,
-  description = site.bio.slice(0, 155),
+  title = `${site.name} — ACHUX21`,
+  description = site.about.slice(0, 155),
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, site.url).href;
 ---
@@ -23,50 +22,24 @@ const canonical = new URL(Astro.url.pathname, site.url).href;
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <meta name="author" content={site.name} />
-    <meta name="theme-color" content="#161210" />
-
-    <!-- Open Graph -->
+    <meta name="theme-color" content="#221828" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    <meta property="og:image" content={new URL('/og.png', site.url).href} />
+    <meta property="og:image" content={new URL('/images/plate-dalian.webp', site.url).href} />
     <meta name="twitter:card" content="summary_large_image" />
-
-    <!-- Set theme before paint to avoid flash -->
     <script is:inline>
       const t = localStorage.getItem('theme');
       if (t === 'light') document.documentElement.classList.add('light');
     </script>
   </head>
   <body>
-    <Aurora />
-    <slot />
-    <div class="crt crt-flicker" aria-hidden="true"></div>
-    <div class="noise" aria-hidden="true"></div>
-
-    <script>
-      // Scroll reveal
-      const io = new IntersectionObserver(
-        (entries) => {
-          for (const e of entries) {
-            if (e.isIntersecting) {
-              e.target.classList.add('in-view');
-              io.unobserve(e.target);
-            }
-          }
-        },
-        { threshold: 0.12 },
-      );
-      document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
-
-      // Theme toggle
-      const btn = document.getElementById('theme-toggle');
-      btn?.addEventListener('click', () => {
-        const root = document.documentElement;
-        root.classList.toggle('light');
-        localStorage.setItem('theme', root.classList.contains('light') ? 'light' : 'dark');
-      });
-    </script>
+    <div class="wire" aria-hidden="true"></div>
+    <a class="skip" href="#main">Skip to content</a>
+    <div class="page">
+      <slot />
+    </div>
+    <div class="grain" aria-hidden="true"></div>
   </body>
 </html>

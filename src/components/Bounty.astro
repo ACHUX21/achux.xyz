@@ -1,0 +1,30 @@
+---
+import { site } from '../data/site';
+import { bounty } from '../data/record';
+---
+<section class="layer bounty" id="bounty" aria-labelledby="bounty-title">
+  <p class="chrome">LAYER:03 <span>/bounty</span></p>
+  <div class="layer__main">
+    <h2 id="bounty-title">{site.bountyIntro}</h2>
+    <dl class="kv frame">
+      <div><dt>program</dt><dd>{bounty.program}</dd></div>
+      <div>
+        <dt>asset</dt>
+        <dd><a href={bounty.asset}>{bounty.asset}</a></dd>
+      </div>
+      <div><dt>severity</dt><dd>{bounty.severity}</dd></div>
+      <div><dt>award</dt><dd>{bounty.award}</dd></div>
+      <div><dt>state</dt><dd>{bounty.state}</dd></div>
+      <div><dt>accepted</dt><dd>{bounty.accepted}</dd></div>
+      <div>
+        <dt>profile</dt>
+        <dd><a href={bounty.profile}>bugcrowd.com/h/ACH21</a></dd>
+      </div>
+      <div>
+        <dt>source</dt>
+        <dd><a href={bounty.source}>bugrater.com/activity/262</a></dd>
+      </div>
+    </dl>
+    <p class="note">{bounty.note}</p>
+  </div>
+</section>

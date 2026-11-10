@@ -1,0 +1,57 @@
+---
+/**
+ * Three passes of one figure. No portrait was supplied, so the face stays blank.
+ * L0 matte, L1 phosphor wire offset a few px, L2 points off one shoulder.
+ */
+---
+<figure class="figure" data-figure>
+  <div class="figure__clip">
+    <img
+      class="figure__photo"
+      src="/images/figure-l0.webp"
+      width="810"
+      height="910"
+      alt="Neutral clay figure seated at a desk, three-quarter view, looking at a monitor. The face is blank. It stands in for Achraf: matte clay, a phosphor wireframe, and a point cloud leaving one shoulder. No portrait was used."
+      decoding="async"
+    />
+    <img class="figure__wire" data-layer="wire" src="/images/figure-wire.png" width="810" height="910" alt="" />
+    <ul class="figure__labels">
+      <li style="--y: 28%; --x: 3%;">L0 Achraf Ouazzani Chahidi</li>
+      <li style="--y: 40%; --x: 3%;">L1 ACHUX21</li>
+      <li style="--y: 14%; --x: auto; --r: 5%;">L2 ACH21</li>
+      <li style="--y: 90%; --x: 3%;">loc: Dalian, CN · UTC+8</li>
+    </ul>
+  </div>
+  <div class="figure__drift" data-layer="points">
+    <img class="figure__points" src="/images/figure-points.png" width="970" height="910" alt="" />
+  </div>
+</figure>
+
+<script>
+  const root = document.querySelector('[data-figure]');
+  const wire = root?.querySelector('[data-layer="wire"]') as HTMLElement | null;
+  const points = root?.querySelector('[data-layer="points"]') as HTMLElement | null;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const fine = window.matchMedia('(hover: hover) and (pointer: fine)');
+
+  const clamp = (n: number) => Math.max(-8, Math.min(8, n));
+
+  function reset() {
+    if (wire) wire.style.transform = '';
+    if (points) points.style.transform = '';
+  }
+
+  function onMove(e: PointerEvent) {
+    if (reduce.matches || !fine.matches) return;
+    const x = clamp((e.clientX / window.innerWidth - 0.5) * 16);
+    const y = clamp((e.clientY / window.innerHeight - 0.5) * 16);
+    if (wire) wire.style.transform = `translate(${(5 + x * 0.7).toFixed(2)}px, ${(-3 + y * 0.7).toFixed(2)}px)`;
+    if (points) points.style.transform = `translate(${x.toFixed(2)}px, ${y.toFixed(2)}px)`;
+  }
+
+  if (root && fine.matches && !reduce.matches) {
+    window.addEventListener('pointermove', onMove, { passive: true });
+    root.addEventListener('pointerleave', reset);
+  }
+  reduce.addEventListener('change', reset);
+</script>

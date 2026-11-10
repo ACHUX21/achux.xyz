@@ -1,0 +1,115 @@
+---
+import Plate from './Plate.astro';
+import { site } from '../data/site';
+import {
+  placements,
+  challengeAuthor,
+  firstBlood,
+  teams,
+  ctfLog,
+  writeups,
+} from '../data/record';
+---
+<section class="layer record" id="record" aria-labelledby="record-title">
+  <p class="chrome">LAYER:02 <span>/record</span></p>
+  <div class="layer__main">
+    <div class="record__top">
+      <div>
+        <h2 id="record-title">{site.recordIntro}</h2>
+        <ul class="record__notes">
+          <li>{challengeAuthor}</li>
+          <li>
+            First blood: rev challenge "tbarkallah 3lek awldi katchfi lghalil", 1337 Local CTF
+            (<a href={firstBlood.href}>writeup on blog</a>).
+          </li>
+        </ul>
+      </div>
+      <Plate
+        src="/images/plate-desk.webp"
+        width={1152}
+        height={864}
+        caption="plate 02 · desk · 03:00"
+        alt="A desk at 3 a.m.: a CRT monitor with an unreadable dense log, a laptop, cables, and a cup, lit by one warm lamp."
+      />
+    </div>
+
+    <table class="log log--place">
+      <caption class="visually-hidden">Placements</caption>
+      <tbody>
+        {placements.map((p) => (
+          <tr>
+            <th scope="row">{p.place}</th>
+            <td>{p.event}</td>
+            <td class="team">{p.team}</td>
+            <td class="when">{p.date}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+
+    <dl class="figures">
+      <div>
+        <dt>writeups</dt>
+        <dd>28</dd>
+      </div>
+      <div>
+        <dt>firsts</dt>
+        <dd>3</dd>
+        <p class="fine">2025, with PLOTONEA</p>
+      </div>
+      <div>
+        <dt>events</dt>
+        <dd>16</dd>
+        <p class="fine">CTFtime as team ACHUX21, plus L3ak, PLOTONEA, F1ux</p>
+      </div>
+      <div>
+        <dt>bounty</dt>
+        <dd>1</dd>
+        <p class="fine">published on Bugcrowd</p>
+      </div>
+    </dl>
+
+    <h3 class="block-label">Teams</h3>
+    <ul class="teams">
+      {teams.map((t) => (
+        <li>
+          <span class="teams__name">{t.name}</span>
+          <span class="teams__status">{t.status}</span>
+          <span class="teams__links">
+            {t.links?.map((l) => (
+              <a href={l.href} target="_blank" rel="noopener noreferrer">{l.label}</a>
+            ))}
+          </span>
+        </li>
+      ))}
+    </ul>
+
+    <h3 class="block-label">CTFtime · team ACHUX21</h3>
+    <table class="log log--ctf">
+      <caption>
+        <a href="https://ctftime.org/team/225828">ctftime.org/team/225828</a>
+        · profile <a href="https://ctftime.org/user/150843">ACHUX21</a>
+        · capturing flags since Dec 2022. Place, then event. Newest first.
+      </caption>
+      <tbody>
+        {ctfLog.map((row) => (
+          <tr>
+            <th scope="row">{row.place}</th>
+            <td>{row.event}</td>
+            <td class="when">{row.year}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+
+    <div class="writeups" tabindex="0" aria-label="Writeups, 28 posts">
+      <h3>Writeups · 28</h3>
+      {writeups.map((w) => (
+        <a href={w.href} target="_blank" rel="noopener noreferrer">
+          <time datetime={w.date}>{w.date}</time>
+          <span>{w.title}</span>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
