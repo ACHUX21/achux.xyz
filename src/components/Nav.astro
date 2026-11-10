@@ -3,28 +3,22 @@ import { navLinks } from '../data/site';
 ---
 <nav class="nav" aria-label="Sections">
   <a class="nav__brand" href="#top">ACHUX21</a>
-  <div class="nav__links">
-    {navLinks.map((l) => (
-      <a href={l.href}>{l.label}</a>
-    ))}
+  <div class="nav__end">
+    <div class="nav__links">
+      {navLinks.map((l) => (
+        <a href={l.href}>{l.label}</a>
+      ))}
+    </div>
+    <button
+      id="nav-open"
+      class="nav__menu"
+      type="button"
+      aria-haspopup="dialog"
+      aria-controls="nav-dialog"
+    >
+      menu
+    </button>
   </div>
-  <button
-    id="theme-toggle"
-    type="button"
-    aria-pressed="false"
-    aria-label="Use light theme"
-  >
-    light
-  </button>
-  <button
-    id="nav-open"
-    class="nav__menu"
-    type="button"
-    aria-haspopup="dialog"
-    aria-controls="nav-dialog"
-  >
-    menu
-  </button>
 </nav>
 
 <dialog id="nav-dialog" class="menu" aria-label="Sections">
@@ -37,24 +31,8 @@ import { navLinks } from '../data/site';
 </dialog>
 
 <script is:inline>
-  const themeBtn = document.getElementById('theme-toggle');
   const dialog = document.getElementById('nav-dialog');
   const openBtn = document.getElementById('nav-open');
-
-  function syncTheme() {
-    const light = document.documentElement.classList.contains('light');
-    themeBtn.setAttribute('aria-pressed', light ? 'true' : 'false');
-    themeBtn.textContent = light ? 'dark' : 'light';
-    themeBtn.setAttribute('aria-label', light ? 'Use dark theme' : 'Use light theme');
-  }
-  syncTheme();
-  themeBtn.addEventListener('click', () => {
-    const root = document.documentElement;
-    root.classList.toggle('light');
-    localStorage.setItem('theme', root.classList.contains('light') ? 'light' : 'dark');
-    syncTheme();
-  });
-
   openBtn.addEventListener('click', () => dialog.showModal());
   dialog.addEventListener('click', (e) => {
     if (e.target === dialog) dialog.close();

@@ -8,7 +8,7 @@ interface Props {
 }
 const {
   title = `${site.name} — ACHUX21`,
-  description = site.about.slice(0, 155),
+  description = site.description,
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, site.url).href;
 ---
@@ -29,10 +29,6 @@ const canonical = new URL(Astro.url.pathname, site.url).href;
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={new URL('/images/plate-dalian.webp', site.url).href} />
     <meta name="twitter:card" content="summary_large_image" />
-    <script is:inline>
-      const t = localStorage.getItem('theme');
-      if (t === 'light') document.documentElement.classList.add('light');
-    </script>
   </head>
   <body>
     <div class="wire" aria-hidden="true"></div>

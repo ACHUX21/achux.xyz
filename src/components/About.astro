@@ -6,7 +6,10 @@ import { facts } from '../data/record';
   <p class="chrome">LAYER:01 <span>/whoami</span></p>
   <div class="layer__main">
     <div class="whoami__grid">
-      <h2 id="whoami-title">{site.about}</h2>
+      <div>
+        <h2 id="whoami-title">Whoami</h2>
+        <p class="prose">{site.about}</p>
+      </div>
       <div>
         <dl class="kv frame">
           {facts.map((f) => (
