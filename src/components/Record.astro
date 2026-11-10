@@ -30,10 +30,15 @@ const byYear = timelineYears.map((year) => ({
 }));
 ---
 <section class="record" id="record" aria-labelledby="record-title">
-  <Protocol path="/record" status={`${ctfCount} events`} layer="02" />
-  <h2 id="record-title" class="visually-hidden">Record</h2>
-
-  <div class="marks">
+  <div class="feature">
+    <div class="feature__copy">
+      <Protocol path="/record" status={`${ctfCount} events`} layer="02" />
+      <p class="feature__index">01</p>
+      <h2 id="record-title">Record</h2>
+      <p>Three firsts in 2025 with PLOTONEA. Second in the Cyber Odyssey 2024 open division with L3AK MA.</p>
+      <a class="btn" href="#record-marks">Placements</a>
+    </div>
+    <div class="screen" id="record-marks">
     <ul class="places">
       {placeMarks.map((p) => (
         <li>
@@ -45,26 +50,28 @@ const byYear = timelineYears.map((year) => ({
     </ul>
     <p class="minor">{htb.place} · {htb.event} · {htb.team} · {htb.date}</p>
     <p class="fine">{prizeNote}</p>
+    </div>
+  </div>
 
-    <ul class="findings">
-      <li>
-        <span class="finding__title">Viator <span>{viator.severity}</span></span>
-        <span class="giant__meta">Bugcrowd ACH21 · accepted {viator.accepted}</span>
-        <span class="amount">{viator.award}</span>
-      </li>
-      <li>
-        <span class="finding__title">{p4.program} <span>{p4.severity}</span></span>
-        {p4.note && <span class="giant__meta">{p4.note}</span>}
-        <span class="amount">{p4.award}</span>
-      </li>
-    </ul>
-    <p class="honest">{site.bountyIntro}</p>
-    {viator.asset && (
-      <p class="fine">
-        <a href={viator.asset}>{viator.asset}</a>
-        {viator.profile && <> · <a href={viator.profile}>{viator.profileLabel}</a></>}
-      </p>
-    )}
+  <div class="feature feature--flip">
+    <div class="feature__copy">
+      <p class="feature__index">02</p>
+      <h2>Viator <span>{viator.severity}</span></h2>
+      <p>Bugcrowd ACH21 · accepted {viator.accepted}</p>
+      <p class="amount">{viator.award}</p>
+      <p>{site.bountyIntro}</p>
+      <p class="minor">{p4.program} · {p4.severity}. {p4.note} <span class="amount">{p4.award}</span></p>
+      {viator.profile && <a class="btn" href={viator.profile}>Bugcrowd <span class="out__host">{hostOf(viator.profile)}</span></a>}
+    </div>
+    <div class="screen">
+      <p class="screen__label">finding</p>
+      <p class="finding__title">Viator {viator.severity}</p>
+      <p class="giant__meta">supplier.viator.com · accepted {viator.accepted}</p>
+      <p class="amount">{viator.award}</p>
+      <p class="finding__title">{p4.severity}</p>
+      <p class="giant__meta">{p4.program}. {p4.note}</p>
+      <p class="amount">{p4.award}</p>
+    </div>
   </div>
 
   <div class="line">

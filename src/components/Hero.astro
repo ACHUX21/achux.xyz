@@ -1,6 +1,8 @@
 ---
 import Protocol from './Protocol.astro';
 import { site } from '../data/site';
+
+const roles = ['Web security', 'CTF player', 'Bug hunter', 'Writeups'];
 ---
 <section class="hero" id="top" aria-labelledby="hero-name">
   <img
@@ -12,14 +14,70 @@ import { site } from '../data/site';
     fetchpriority="high"
     decoding="async"
   />
+  <canvas id="wire-canvas" class="hero__gl" aria-hidden="true"></canvas>
+  <svg class="hero__fallback" hidden viewBox="0 0 200 200" aria-hidden="true">
+    <circle cx="100" cy="100" r="70" fill="none" stroke="#9a93a3" stroke-width="0.6" />
+    <circle cx="100" cy="100" r="46" fill="none" stroke="#9a93a3" stroke-width="0.6" />
+    <path d="M30 100 H170 M100 30 V170 M48 48 L152 152 M152 48 L48 152" fill="none" stroke="#9a93a3" stroke-width="0.5" />
+    <circle cx="100" cy="30" r="2" fill="#c8102e" />
+    <circle cx="170" cy="100" r="2" fill="#c8102e" />
+    <circle cx="100" cy="170" r="2" fill="#c8102e" />
+  </svg>
   <div class="hero__noise" aria-hidden="true"></div>
   <div class="hero__shade" aria-hidden="true"></div>
   <div class="hero__copy">
     <Protocol path="/" status="Dalian" layer="00" />
     <p class="hero__meta">
       <span>plate 01 · dalian · 18:40</span>
+      <span>大连 · Dalian</span>
     </p>
     <h1 class="hero__name" id="hero-name">{site.name}</h1>
+    <p class="role" data-roles={roles.join('|')}>
+      <span id="role-word">{roles[0]}</span>
+    </p>
     <p class="hero__line">{site.line}</p>
   </div>
 </section>
+
+<script>
+  const canvas = document.getElementById('wire-canvas') as HTMLCanvasElement | null;
+  const fallback = document.querySelector('.hero__fallback');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const word = document.getElementById('role-word');
+  const roles = (word?.parentElement?.getAttribute('data-roles') || '').split('|').filter(Boolean);
+
+  function showFallback() {
+    if (canvas) canvas.hidden = true;
+    if (fallback) fallback.removeAttribute('hidden');
+  }
+
+  if (!canvas || reduce || !window.WebGLRenderingContext) {
+    showFallback();
+  } else {
+    import('../scripts/wire-scene').then((mod) => mod.mountWire(canvas)).catch(showFallback);
+  }
+
+  if (word && !reduce) {
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    let index = 0;
+    const reveal = (next) => {
+      let step = 0;
+      const timer = setInterval(() => {
+        step += 1;
+        if (step < 6) {
+          word.textContent = next
+            .split('')
+            .map((char, i) => (i < step - 1 || char === ' ' ? char : alphabet[Math.floor(Math.random() * alphabet.length)]))
+            .join('');
+        } else {
+          word.textContent = next;
+          clearInterval(timer);
+        }
+      }, 40);
+    };
+    setInterval(() => {
+      index = (index + 1) % roles.length;
+      reveal(roles[index]);
+    }, 2800);
+  }
+</script>

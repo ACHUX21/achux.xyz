@@ -61,7 +61,7 @@
   window.addEventListener('resize', draw);
 
   const depthLinks = [...document.querySelectorAll('[data-depth]')];
-  const navLinks = [...document.querySelectorAll('.nav [data-section]')];
+  const navLinks = [...document.querySelectorAll('.nav [data-section], .rail [data-section]')];
   const layerNow = document.getElementById('layer-now');
 
   function markSection() {

@@ -5,10 +5,19 @@ const year = new Date().getFullYear();
 ---
 <section class="contact" id="contact" aria-labelledby="contact-title">
   <Protocol path="/contact" status={site.email} layer="04" />
-  <h2 id="contact-title">
-    <a href="mailto:21@achux.xyz">21@achux.xyz</a>
-  </h2>
-  <p>{site.contact}</p>
+  <div class="feature">
+    <div class="feature__copy">
+      <h2 id="contact-title">
+        <a href="mailto:21@achux.xyz">21@achux.xyz</a>
+      </h2>
+      <p>{site.contact}</p>
+      <form class="mail" id="mail-form">
+        <label>Name <input name="name" type="text" autocomplete="name" /></label>
+        <label>Message <textarea name="message" rows="5"></textarea></label>
+        <button class="btn" type="submit">Send</button>
+      </form>
+    </div>
+  </div>
   <ul>
     {contactLinks.map((l) => (
       <li>
@@ -17,6 +26,18 @@ const year = new Date().getFullYear();
     ))}
   </ul>
 </section>
+
+<script>
+  const form = document.getElementById('mail-form');
+  form?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const data = new FormData(form);
+    const name = String(data.get('name') || '').trim();
+    const message = String(data.get('message') || '').trim();
+    const subject = name ? `From ${name}` : 'achux.xyz';
+    window.location.href = `mailto:21@achux.xyz?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
+  });
+</script>
 
 <footer class="colophon">
   <p class="colophon__quote">{site.quote}</p>

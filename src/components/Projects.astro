@@ -13,12 +13,30 @@ function hexRows(text: string) {
     return row;
   });
 }
+
+const featured = projects.find((project) => project.featured)!;
+const rest = projects.filter((project) => !project.featured);
 ---
 <section class="work" id="work" aria-labelledby="work-title">
-  <Protocol path="/work" status={`${projects.length} projects`} layer="03" />
-  <h2 id="work-title">Work</h2>
+  <div class="feature feature--flip">
+    <div class="screen">
+      <p class="screen__label">packguard</p>
+      <p class="finding__title">{featured.name}</p>
+      <p>{featured.blurb}</p>
+      <p class="projects__stack">{featured.stack}</p>
+    </div>
+    <div class="feature__copy">
+      <Protocol path="/work" status={`${projects.length} projects`} layer="03" />
+      <p class="feature__index">03</p>
+      <h2 id="work-title">{featured.name}</h2>
+      <p>{featured.blurb}</p>
+      {featured.repo && (
+        <a class="btn" href={featured.repo} target="_blank" rel="noopener noreferrer">code <span class="out__host">{hostOf(featured.repo)}</span></a>
+      )}
+    </div>
+  </div>
   <ul class="projects">
-    {projects.map((p) => (
+    {rest.map((p) => (
       <li>
         <h3>
           {p.name}
@@ -39,7 +57,10 @@ function hexRows(text: string) {
   </ul>
 
   <div class="cases">
-    <h3 class="cases__label">Writeups</h3>
+    <div class="feature__copy">
+      <p class="feature__index">04</p>
+      <h3 class="cases__label">Writeups</h3>
+    </div>
     {cases.map((c, i) => (
       <article class:list={['case', i === 1 && 'case--flip']}>
         <header>
