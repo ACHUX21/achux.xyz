@@ -53,25 +53,24 @@ const byYear = timelineYears.map((year) => ({
     </div>
   </div>
 
-  <div class="feature feature--flip">
-    <div class="feature__copy">
-      <p class="feature__index">02</p>
-      <h2>Viator <span>{viator.severity}</span></h2>
-      <p>Bugcrowd ACH21 · accepted {viator.accepted}</p>
-      <p class="amount">{viator.award}</p>
-      <p>{site.bountyIntro}</p>
-      <p class="minor">{p4.program} · {p4.severity}. {p4.note} <span class="amount">{p4.award}</span></p>
-      {viator.profile && <a class="btn" href={viator.profile}>Bugcrowd <span class="out__host">{hostOf(viator.profile)}</span></a>}
-    </div>
-    <div class="screen">
-      <p class="screen__label">finding</p>
-      <p class="finding__title">Viator {viator.severity}</p>
-      <p class="giant__meta">supplier.viator.com · accepted {viator.accepted}</p>
-      <p class="amount">{viator.award}</p>
-      <p class="finding__title">{p4.severity}</p>
-      <p class="giant__meta">{p4.program}. {p4.note}</p>
-      <p class="amount">{p4.award}</p>
-    </div>
+  <div class="findings-block" id="findings">
+    <p class="feature__index">02</p>
+    <h2>Findings</h2>
+    <ul class="pair">
+      <li>
+        <h3>Viator <span>{viator.severity}</span></h3>
+        <p>Bugcrowd ACH21</p>
+        <p>accepted {viator.accepted}</p>
+        <p>{site.bountyIntro}</p>
+        <p class="amount">{viator.award}</p>
+        {viator.profile && <a class="btn" href={viator.profile}>Bugcrowd profile</a>}
+      </li>
+      <li>
+        <h3>{p4.program} <span>{p4.severity}</span></h3>
+        <p>{p4.note}</p>
+        <p class="amount">{p4.award}</p>
+      </li>
+    </ul>
   </div>
 
   <div class="line">

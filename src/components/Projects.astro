@@ -20,10 +20,8 @@ const rest = projects.filter((project) => !project.featured);
 <section class="work" id="work" aria-labelledby="work-title">
   <div class="feature feature--flip">
     <div class="screen">
-      <p class="screen__label">packguard</p>
+      <p class="screen__label">{featured.stack}</p>
       <p class="finding__title">{featured.name}</p>
-      <p>{featured.blurb}</p>
-      <p class="projects__stack">{featured.stack}</p>
     </div>
     <div class="feature__copy">
       <Protocol path="/work" status={`${projects.length} projects`} layer="03" />
@@ -31,7 +29,7 @@ const rest = projects.filter((project) => !project.featured);
       <h2 id="work-title">{featured.name}</h2>
       <p>{featured.blurb}</p>
       {featured.repo && (
-        <a class="btn" href={featured.repo} target="_blank" rel="noopener noreferrer">code <span class="out__host">{hostOf(featured.repo)}</span></a>
+        <a class="btn" href={featured.repo} target="_blank" rel="noopener noreferrer">Code</a>
       )}
     </div>
   </div>
@@ -67,8 +65,8 @@ const rest = projects.filter((project) => !project.featured);
           <p>{c.event}</p>
           <h3>
             <a href={c.href} target="_blank" rel="noopener noreferrer">{c.title}</a>
-            <span class="out__host">{hostOf(c.href)}</span>
           </h3>
+          <p class="out__host">{hostOf(c.href)}</p>
         </header>
         <div class="hex">
           {hexRows(c.request).map((row) => (
