@@ -1,0 +1,107 @@
+---
+import { site, contactLinks, hostOf } from '../data/site';
+import { facts, placements, bounties, ctfCount } from '../data/record';
+
+const payload = {
+  name: site.name,
+  email: site.email,
+  line: site.line,
+  quote: site.quote,
+  facts: facts.map((f) => `${f.key}  ${f.value}`),
+  record: [
+    ...placements.map((p) => `${p.place}  ${p.event}  ${p.team}  ${p.date}${p.prize ? '  ' + p.prize : ''}`),
+    ...bounties.map((b) => `${b.program}  ${b.severity}${b.accepted ? '  ' + b.accepted : ''}${b.note ? '  ' + b.note : ''}  ${b.award}`),
+    `${ctfCount} events`,
+  ],
+  links: contactLinks.map((l) => `${l.label}  ${hostOf(l.href)}`),
+};
+---
+<div class="cli" id="cli" hidden>
+  <div class="cli__out" id="cli-out"></div>
+  <form id="cli-form">
+    <label for="cli-in">&gt;</label>
+    <input id="cli-in" type="text" autocomplete="off" spellcheck="false" aria-label="Command" />
+  </form>
+</div>
+
+<script define:vars={{ payload }}>
+  const root = document.getElementById('cli');
+  const out = document.getElementById('cli-out');
+  const form = document.getElementById('cli-form');
+  const input = document.getElementById('cli-in');
+
+  function print(text) {
+    const line = document.createElement('p');
+    line.textContent = text;
+    out.appendChild(line);
+    out.scrollTop = out.scrollHeight;
+  }
+
+  function go(id) {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView();
+  }
+
+  function run(raw) {
+    const cmd = raw.trim().toLowerCase();
+    print('> ' + raw.trim());
+    if (cmd === 'whoami') {
+      print(payload.name);
+      print(payload.email);
+      print(payload.line);
+      payload.facts.forEach(print);
+      print(payload.quote);
+      go('whoami');
+    } else if (cmd === 'ls') {
+      print('/whoami');
+      print('/record');
+      print('/work');
+      print('/contact');
+    } else if (cmd === 'cat record') {
+      payload.record.forEach(print);
+      go('record');
+    } else if (cmd === 'contact') {
+      print(payload.email);
+      payload.links.forEach(print);
+      go('contact');
+    } else if (cmd === 'clear') {
+      out.replaceChildren();
+    } else if (cmd === '') {
+      print('whoami, ls, cat record, contact, clear');
+    } else {
+      print('unknown. whoami, ls, cat record, contact, clear');
+    }
+  }
+
+  function openCli() {
+    root.hidden = false;
+    input.focus();
+  }
+
+  function closeCli() {
+    root.hidden = true;
+    input.blur();
+  }
+
+  document.addEventListener('keydown', (e) => {
+    const typing = document.activeElement === input;
+    if (e.key === 'Escape' && !root.hidden) {
+      e.preventDefault();
+      closeCli();
+      return;
+    }
+    if (typing) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.key === '?' || e.key === '/') {
+      e.preventDefault();
+      openCli();
+    }
+  });
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const value = input.value;
+    input.value = '';
+    run(value);
+  });
+</script>

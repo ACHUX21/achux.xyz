@@ -1,4 +1,5 @@
 ---
+import Protocol from './Protocol.astro';
 import { site } from '../data/site';
 ---
 <section class="hero" id="top" aria-labelledby="hero-name">
@@ -11,34 +12,14 @@ import { site } from '../data/site';
     fetchpriority="high"
     decoding="async"
   />
+  <div class="hero__noise" aria-hidden="true"></div>
   <div class="hero__shade" aria-hidden="true"></div>
   <div class="hero__copy">
+    <Protocol path="/" status="Dalian" layer="00" />
     <p class="hero__meta">
       <span>plate 01 · dalian · 18:40</span>
-      <time class="clock" id="clock" datetime="" aria-label="Current time in Dalian, UTC+8">--:--:--</time>
-      <span>UTC+8</span>
     </p>
     <h1 class="hero__name" id="hero-name">{site.name}</h1>
     <p class="hero__line">{site.line}</p>
   </div>
 </section>
-
-<script>
-  const clock = document.getElementById('clock');
-  if (clock) {
-    const fmt = new Intl.DateTimeFormat('en-GB', {
-      timeZone: 'Asia/Shanghai',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hourCycle: 'h23',
-    });
-    const tick = () => {
-      const now = new Date();
-      clock.textContent = fmt.format(now);
-      clock.setAttribute('datetime', now.toISOString());
-    };
-    tick();
-    setInterval(tick, 1000);
-  }
-</script>

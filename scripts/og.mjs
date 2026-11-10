@@ -1,37 +1,62 @@
-import { createRequire } from 'node:module';
+import { spawn } from 'node:child_process';
+import { writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const require = createRequire(import.meta.url);
-const sharp = require(join(root, 'node_modules/.pnpm/sharp@0.34.5/node_modules/sharp'));
-
+const fontDir = join(root, 'node_modules/@fontsource/ibm-plex-mono/files');
 const photo = join(root, 'public/images/plate-dalian.webp');
 const out = join(root, 'public/og.png');
+const htmlPath = '/tmp/achux-og.html';
 
-const svg = `<?xml version="1.0" encoding="UTF-8"?>
-<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="s" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#100e13" stop-opacity="0.2"/>
-      <stop offset="0.42" stop-color="#100e13" stop-opacity="0"/>
-      <stop offset="1" stop-color="#100e13" stop-opacity="0.9"/>
-    </linearGradient>
-  </defs>
-  <rect width="1200" height="630" fill="url(#s)"/>
-  <text x="72" y="418" fill="#cfc9d4" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" font-size="22">plate 01 · dalian · 18:40</text>
-  <text x="72" y="500" fill="#f3efe6" font-family="DejaVu Serif, Liberation Serif, serif" font-size="68" font-style="italic">Achraf Ouazzani Chahidi</text>
-  <text x="72" y="558" fill="#d4c6f2" font-family="JetBrains Mono, DejaVu Sans Mono, monospace" font-size="24">21@achux.xyz</text>
-</svg>`;
+const html = `<!doctype html>
+<meta charset="utf-8">
+<style>
+  @font-face {
+    font-family: 'IBM Plex Mono';
+    font-weight: 400;
+    src: url('file://${fontDir}/ibm-plex-mono-latin-400-normal.woff2') format('woff2');
+  }
+  @font-face {
+    font-family: 'IBM Plex Mono';
+    font-weight: 700;
+    src: url('file://${fontDir}/ibm-plex-mono-latin-700-normal.woff2') format('woff2');
+  }
+  html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; background: #100e13; }
+  .card { position: relative; width: 1200px; height: 630px; }
+  img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; }
+  .shade {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgb(16 14 19 / 0.9) 0%, rgb(16 14 19 / 0) 48%, rgb(16 14 19 / 0.2) 100%);
+  }
+  .text { position: absolute; left: 72px; right: 72px; bottom: 56px; font-family: 'IBM Plex Mono', monospace; }
+  .meta { margin: 0 0 14px; color: #cfc9d4; font-weight: 400; font-size: 20px; letter-spacing: 0.02em; }
+  .name { margin: 0; color: #f3efe6; font-weight: 700; font-size: 46px; letter-spacing: -0.04em; line-height: 1.15; }
+  .mail { margin: 14px 0 0; color: #d4c6f2; font-weight: 400; font-size: 22px; }
+</style>
+<div class="card">
+  <img src="file://${photo}" alt="">
+  <div class="shade"></div>
+  <div class="text">
+    <p class="meta">plate 01 · dalian · 18:40</p>
+    <p class="name">Achraf Ouazzani Chahidi</p>
+    <p class="mail">21@achux.xyz</p>
+  </div>
+</div>
+`;
+writeFileSync(htmlPath, html);
 
-const base = await sharp(photo)
-  .resize(1200, 630, { fit: 'cover', position: 'centre' })
-  .png()
-  .toBuffer();
+const chrome = spawn('google-chrome', [
+  '--headless=new',
+  '--disable-gpu',
+  '--no-sandbox',
+  '--hide-scrollbars',
+  '--force-device-scale-factor=1',
+  `--window-size=1200,630`,
+  `--screenshot=${out}`,
+  `file://${htmlPath}`,
+], { stdio: 'inherit' });
 
-await sharp(base)
-  .composite([{ input: Buffer.from(svg), top: 0, left: 0 }])
-  .png()
-  .toFile(out);
-
+const code = await new Promise((resolve) => chrome.on('exit', resolve));
+if (code !== 0) process.exit(code ?? 1);
 console.log('wrote', out);

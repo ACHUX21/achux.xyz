@@ -17,7 +17,7 @@ pnpm preview
 
 - `src/data/*.ts` — copy and records (site, skills, projects, record).
 - `src/components/*.astro` — nav, hero, whoami, record, work, contact.
-- `src/styles/global.css` — dusk tokens. Fraunces for type, JetBrains Mono for data.
+- `src/styles/global.css` — dusk tokens. IBM Plex Mono for the whole page.
 - `public/images/plate-dalian.webp` — the Dalian street plate. `public/og.png` is the share card.
 - `public/.well-known/security.txt` — RFC 9116. `public/.nojekyll` keeps that folder on GitHub Pages.
 

@@ -1,8 +1,10 @@
 ---
-import { site, contactLinks } from '../data/site';
+import Protocol from './Protocol.astro';
+import { site, contactLinks, hostOf } from '../data/site';
 const year = new Date().getFullYear();
 ---
 <section class="contact" id="contact" aria-labelledby="contact-title">
+  <Protocol path="/contact" status={site.email} layer="04" />
   <h2 id="contact-title">
     <a href="mailto:21@achux.xyz">21@achux.xyz</a>
   </h2>
@@ -10,12 +12,14 @@ const year = new Date().getFullYear();
   <ul>
     {contactLinks.map((l) => (
       <li>
-        <a href={l.href} target="_blank" rel="noopener noreferrer">{l.label}</a>
+        <a href={l.href} target="_blank" rel="noopener noreferrer">{l.label} <span class="out__host">{hostOf(l.href)}</span></a>
       </li>
     ))}
   </ul>
 </section>
 
 <footer class="colophon">
+  <p class="colophon__quote">{site.quote}</p>
+  <p>F1ux bio · ACHUX21 · Member</p>
   <p>© {year} {site.name}</p>
 </footer>

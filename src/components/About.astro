@@ -1,8 +1,10 @@
 ---
+import Protocol from './Protocol.astro';
 import { site } from '../data/site';
 import { facts } from '../data/record';
 ---
 <section class="whoami" id="whoami" aria-labelledby="whoami-title">
+  <Protocol path="/whoami" status="F1ux" layer="01" />
   <h2 id="whoami-title" class="visually-hidden">Whoami</h2>
   <p class="whoami__prose">{site.about}</p>
   <ul class="whoami__facts">

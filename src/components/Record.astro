@@ -1,5 +1,6 @@
 ---
-import { site } from '../data/site';
+import Protocol from './Protocol.astro';
+import { site, hostOf } from '../data/site';
 import {
   placements,
   prizeNote,
@@ -8,6 +9,7 @@ import {
   timelineYears,
   undatedMarks,
   teams,
+  ctfCount,
 } from '../data/record';
 
 const placeMarks = placements
@@ -28,6 +30,7 @@ const byYear = timelineYears.map((year) => ({
 }));
 ---
 <section class="record" id="record" aria-labelledby="record-title">
+  <Protocol path="/record" status={`${ctfCount} events`} layer="02" />
   <h2 id="record-title" class="visually-hidden">Record</h2>
 
   <div class="marks">
@@ -71,13 +74,13 @@ const byYear = timelineYears.map((year) => ({
     <div class="line__years">
       {byYear.map((col) => (
         <div>
-          <h3>{col.year}</h3>
+          <h3 class:list={{ 'is-now': col.year === '2026' }}>{col.year}</h3>
           <ol>
             {col.marks.map((m) => (
               <li>
                 <time>{m.when}</time>
                 {m.href ? (
-                  <a href={m.href} target="_blank" rel="noopener noreferrer">{m.title}</a>
+                  <a href={m.href} target="_blank" rel="noopener noreferrer">{m.title} <span class="out__host">{hostOf(m.href)}</span></a>
                 ) : (
                   <span>{m.title}</span>
                 )}
@@ -113,7 +116,7 @@ const byYear = timelineYears.map((year) => ({
         <span class="teams__name">{t.name}</span>
         <span>{t.status}</span>
         {t.links?.map((l) => (
-          <a href={l.href} target="_blank" rel="noopener noreferrer">{l.label}</a>
+          <a href={l.href} target="_blank" rel="noopener noreferrer">{l.label} <span class="out__host">{hostOf(l.href)}</span></a>
         ))}
       </li>
     ))}

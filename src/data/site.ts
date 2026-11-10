@@ -18,14 +18,23 @@ export const site = {
   quote: 'meow~ lost in the wired',
 };
 
-export type NavLink = { label: string; href: string };
+export type NavLink = { label: string; href: string; id: string };
 
 export const navLinks: NavLink[] = [
-  { label: 'whoami', href: '/#whoami' },
-  { label: 'record', href: '/#record' },
-  { label: 'work', href: '/#work' },
-  { label: 'contact', href: '/#contact' },
+  { label: '/whoami', href: '/#whoami', id: 'whoami' },
+  { label: '/record', href: '/#record', id: 'record' },
+  { label: '/work', href: '/#work', id: 'work' },
+  { label: '/contact', href: '/#contact', id: 'contact' },
 ];
+
+export function hostOf(href: string): string {
+  if (href.startsWith('mailto:')) return href.slice('mailto:'.length);
+  try {
+    return new URL(href).host;
+  } catch {
+    return '';
+  }
+}
 
 export type OutLink = { label: string; href: string };
 

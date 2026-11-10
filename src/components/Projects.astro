@@ -1,8 +1,21 @@
 ---
+import Protocol from './Protocol.astro';
+import { hostOf } from '../data/site';
 import { projects } from '../data/projects';
 import { cases } from '../data/cases';
+
+function hexRows(text: string) {
+  const lines = text.split('\n');
+  let offset = 0;
+  return lines.map((line) => {
+    const row = { off: offset.toString(16).padStart(4, '0'), line };
+    offset += new TextEncoder().encode(line).length + 1;
+    return row;
+  });
+}
 ---
 <section class="work" id="work" aria-labelledby="work-title">
+  <Protocol path="/work" status={`${projects.length} projects`} layer="03" />
   <h2 id="work-title">Work</h2>
   <ul class="projects">
     {projects.map((p) => (
@@ -15,10 +28,10 @@ import { cases } from '../data/cases';
         <p class="projects__stack">{p.stack}</p>
         <p class="projects__links">
           {p.repo && (
-            <a href={p.repo} target="_blank" rel="noopener noreferrer">code</a>
+            <a href={p.repo} target="_blank" rel="noopener noreferrer">code <span class="out__host">{hostOf(p.repo)}</span></a>
           )}
           {p.live && (
-            <a href={p.live} target="_blank" rel="noopener noreferrer">site</a>
+            <a href={p.live} target="_blank" rel="noopener noreferrer">site <span class="out__host">{hostOf(p.live)}</span></a>
           )}
         </p>
       </li>
@@ -31,9 +44,19 @@ import { cases } from '../data/cases';
       <article class:list={['case', i === 1 && 'case--flip']}>
         <header>
           <p>{c.event}</p>
-          <h3><a href={c.href} target="_blank" rel="noopener noreferrer">{c.title}</a></h3>
+          <h3>
+            <a href={c.href} target="_blank" rel="noopener noreferrer">{c.title}</a>
+            <span class="out__host">{hostOf(c.href)}</span>
+          </h3>
         </header>
-        <pre class="http"><code>{c.request}</code></pre>
+        <div class="hex">
+          {hexRows(c.request).map((row) => (
+            <div>
+              <span>{row.off}</span>
+              <code>{row.line || ' '}</code>
+            </div>
+          ))}
+        </div>
         <p class="case__reached">{c.reached}</p>
       </article>
     ))}
