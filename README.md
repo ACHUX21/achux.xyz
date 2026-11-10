@@ -2,7 +2,7 @@
 
 Personal site of Achraf Ouazzani Chahidi (ACHUX21). Astro + Tailwind CSS v4.
 
-The page is a stack of layers: a Dalian plate, a blank clay figure, and a protocol log of the CTF record, bounties, and the work. Dark only.
+Personal site of Achraf Ouazzani Chahidi. The Dalian street plate is the hero. The record and three writeup case files carry the page. Dark only.
 
 ## Develop
 
@@ -16,8 +16,9 @@ pnpm preview
 ## Structure
 
 - `src/data/*.ts` — copy and records (site, skills, projects, record).
-- `src/components/*.astro` — nav, hero, whoami, record, work, stack, contact.
-- `src/styles/global.css` — hue-300 tokens and the Wired layout.
-- `public/images/` — generated plates and the figure passes.
+- `src/components/*.astro` — nav, hero, whoami, record, work, contact.
+- `src/styles/global.css` — dusk tokens. Fraunces for type, JetBrains Mono for data.
+- `public/images/plate-dalian.webp` — the Dalian street plate. `public/og.png` is the share card.
+- `public/.well-known/security.txt` — RFC 9116. `public/.nojekyll` keeps that folder on GitHub Pages.
 
 Public email is `21@achux.xyz`.

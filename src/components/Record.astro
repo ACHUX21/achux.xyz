@@ -3,168 +3,107 @@ import { site } from '../data/site';
 import {
   placements,
   prizeNote,
-  authored,
-  firstBlood,
-  teams,
-  ctfLog,
-  ctfTimeTeam,
-  writeupEventsBeyondLog,
-  ctfCount,
-  writeupsLead,
-  writeups,
-  localCtfWriteups,
-  writeupCount,
   bounties,
+  timeline,
+  timelineYears,
+  undatedMarks,
+  teams,
 } from '../data/record';
 
-const firsts = placements.filter((p) => p.place.startsWith('1st')).length;
+const odyssey = placements.find((p) => p.event.startsWith('Cyber Odyssey'))!;
+const firsts = placements.filter((p) => p.place === '1st');
+const htb = placements.find((p) => p.place.startsWith('14'))!;
+const viator = bounties[0];
+const p4 = bounties[1];
+const byYear = timelineYears.map((year) => ({
+  year,
+  marks: timeline.filter((m) => m.year === year),
+}));
 ---
-<section class="layer record" id="record" aria-labelledby="record-title">
-  <p class="chrome">LAYER:02 <span>/record</span></p>
-  <div class="layer__main">
-    <h2 id="record-title">Record</h2>
-    <p class="prose">{site.recordIntro}</p>
+<section class="record" id="record" aria-labelledby="record-title">
+  <h2 id="record-title" class="visually-hidden">Record</h2>
 
-    <dl class="figures">
-      <div>
-        <dt>writeups</dt>
-        <dd>{writeupCount}</dd>
-      </div>
-      <div>
-        <dt>ctfs</dt>
-        <dd>{ctfCount}</dd>
-      </div>
-      <div>
-        <dt>bounties</dt>
-        <dd>{bounties.length}</dd>
-        <p class="fine">Viator high, and one unpublished P4</p>
-      </div>
-      <div>
-        <dt>firsts</dt>
-        <dd>{firsts}</dd>
-        <p class="fine">2025, with PLOTONEA</p>
-      </div>
-    </dl>
-    <p class="fine figures-note">
-      {ctfCount} distinct events: {placements.length} placements, {writeupEventsBeyondLog.length} more named in the writeups
-      ({writeupEventsBeyondLog.join(', ')}), and {ctfLog.length} on the <a href={ctfTimeTeam}>ACHUX21 CTFtime log</a>.
-    </p>
-
-    <h3 class="block-label">Placements</h3>
-    <table class="log log--place">
-      <caption>{prizeNote}</caption>
-      <tbody>
-        {placements.map((p) => (
-          <tr>
-            <th scope="row">{p.place}</th>
-            <td>{p.event}</td>
-            <td class="team">{p.team}</td>
-            <td class="when">{p.date}</td>
-            <td class="prize">{p.prize ?? ''}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-
-    <h3 class="block-label">Bounties</h3>
-    <p class="prose">{site.bountyIntro}</p>
-    <ul class="bounty-list">
-      {bounties.map((b) => (
-        <li>
-          <div class="bounty-list__head">
-            <h4>{b.program}</h4>
-            <p class="bounty-list__award">{b.severity} · {b.award}</p>
-          </div>
-          <dl class="kv">
-            {b.asset && (
-              <div>
-                <dt>asset</dt>
-                <dd><a href={b.asset}>{b.asset}</a></dd>
-              </div>
-            )}
-            {b.state && (
-              <div>
-                <dt>state</dt>
-                <dd>{b.state}</dd>
-              </div>
-            )}
-            {b.accepted && (
-              <div>
-                <dt>accepted</dt>
-                <dd>{b.accepted}</dd>
-              </div>
-            )}
-            {b.profile && (
-              <div>
-                <dt>profile</dt>
-                <dd><a href={b.profile}>{b.profileLabel}</a></dd>
-              </div>
-            )}
-            {b.source && (
-              <div>
-                <dt>source</dt>
-                <dd><a href={b.source}>{b.sourceLabel}</a></dd>
-              </div>
-            )}
-          </dl>
-          {b.note && <p class="note">{b.note}</p>}
-        </li>
-      ))}
-    </ul>
-
-    <h3 class="block-label">Challenges</h3>
-    <ul class="credits">
-      {authored.map((c) => (
-        <li>
-          <h4>{c.event}</h4>
-          <p>{c.detail}</p>
-          {c.note && <p class="note">{c.note}</p>}
-          {c.href && (
-            <a class="rowlink" href={c.href} target="_blank" rel="noopener noreferrer">{c.hrefLabel} →</a>
-          )}
-        </li>
-      ))}
-    </ul>
-
-    <h3 class="block-label">Teams</h3>
-    <ul class="teams">
-      {teams.map((t) => (
-        <li>
-          <span class="teams__name">{t.name}</span>
-          <span class="teams__status">{t.status}</span>
-          <span class="teams__links">
-            {t.links?.map((l) => (
-              <a href={l.href} target="_blank" rel="noopener noreferrer">{l.label}</a>
-            ))}
-          </span>
-        </li>
-      ))}
-    </ul>
-
-    <div class="writeups">
-      <h3>Writeups · {writeupCount}</h3>
-      <p class="fine writeups__lead">
-        PearlCTF and the UofTCTF post (FFmpeg injection and cache deception) lead.
-        The {localCtfWriteups.length} same-day 1337 Local CTF posts are grouped after the rest.
+  <div class="marks">
+    <div class="marks__giants">
+      <p class="giant">
+        <span class="giant__num">{odyssey.prize}</span>
+        <span class="giant__meta">{odyssey.place} · {odyssey.event} · {odyssey.team} · {odyssey.date}</span>
       </p>
-      {[...writeupsLead, ...writeups].map((w) => (
-        <a href={w.href} target="_blank" rel="noopener noreferrer">
-          <time datetime={w.date}>{w.date}</time>
-          <span>{w.title}</span>
-        </a>
-      ))}
-      <div class="writeups__group">
-        <h4>1337 Local CTF · {localCtfWriteups.length} posts · 27 Jun 2026</h4>
-        <p class="note">
-          {firstBlood.text} <a href={firstBlood.href}>Writeup on the blog</a>.
-        </p>
-        {localCtfWriteups.map((w) => (
-          <a href={w.href} target="_blank" rel="noopener noreferrer">
-            <time datetime={w.date}>{w.date}</time>
-            <span>{w.title}</span>
-          </a>
-        ))}
-      </div>
+      <p class="giant">
+        <span class="giant__num">{viator.award.replace(' USD', '')}</span>
+        <span class="giant__meta">{viator.program} · {viator.severity} · {viator.accepted}</span>
+      </p>
     </div>
+    <p class="fine">{prizeNote}</p>
+    <ul class="firsts">
+      {firsts.map((p) => (
+        <li>
+          <span class="firsts__num">{p.prize}</span>
+          <span>{p.place} · {p.event} · {p.team} · {p.date}</span>
+        </li>
+      ))}
+    </ul>
+    <p class="minor">{htb.place} · {htb.event} · {htb.team} · {htb.date}</p>
+    <p class="minor">{p4.severity} · {p4.award} · {p4.program}. {p4.note}</p>
+    <p class="honest">{site.bountyIntro}</p>
+    {viator.note && <p class="fine">{viator.note}</p>}
+    {viator.asset && (
+      <p class="fine">
+        <a href={viator.asset}>{viator.asset}</a>
+        {viator.profile && <> · <a href={viator.profile}>{viator.profileLabel}</a></>}
+        {viator.source && <> · <a href={viator.source}>{viator.sourceLabel}</a></>}
+      </p>
+    )}
   </div>
+
+  <div class="line">
+    <svg class="line__wire" viewBox="0 0 1200 36" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 8 C 160 8, 220 30, 400 24 S 720 4, 920 18 S 1100 32, 1200 12" />
+    </svg>
+    <div class="line__years">
+      {byYear.map((col) => (
+        <div>
+          <h3>{col.year}</h3>
+          <ol>
+            {col.marks.map((m) => (
+              <li>
+                <time>{m.when}</time>
+                {m.href ? (
+                  <a href={m.href} target="_blank" rel="noopener noreferrer">{m.title}</a>
+                ) : (
+                  <span>{m.title}</span>
+                )}
+                {m.title.startsWith('1337') && (
+                  <>
+                    {' '}
+                    <a href="https://blog.achux.xyz" target="_blank" rel="noopener noreferrer">blog</a>
+                  </>
+                )}
+              </li>
+            ))}
+          </ol>
+        </div>
+      ))}
+    </div>
+    <ul class="undated">
+      {undatedMarks.map((m) => (
+        <li>
+          <span>{m.title}</span>
+          <span>{m.note}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <ul class="teams">
+    {teams.map((t) => (
+      <li>
+        <span class="teams__name">{t.name}</span>
+        <span>{t.status}</span>
+        {t.links?.map((l) => (
+          <a href={l.href} target="_blank" rel="noopener noreferrer">{l.label}</a>
+        ))}
+      </li>
+    ))}
+  </ul>
 </section>

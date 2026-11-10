@@ -1,34 +1,26 @@
 ---
-import Figure from './Figure.astro';
-import Plate from './Plate.astro';
 import { site } from '../data/site';
 ---
 <section class="hero" id="top" aria-labelledby="hero-name">
-  <p class="hero__chrome chrome">LAYER:00</p>
+  <img
+    class="hero__photo"
+    src="/images/plate-dalian.webp"
+    width="1280"
+    height="720"
+    alt="Utility poles and sagging power lines over a residential street in Dalian at dusk. One apartment window is lit. No people."
+    fetchpriority="high"
+    decoding="async"
+  />
+  <div class="hero__shade" aria-hidden="true"></div>
   <div class="hero__copy">
-    <p class="eyebrow">
-      <span class="signal" aria-hidden="true"></span>
-      <span>present day · present time · Dalian, CN · UTC+8</span>
-      <time class="clock" id="clock" aria-label="Current time, UTC+8">--:--:--</time>
+    <p class="hero__meta">
+      <span>plate 01 · dalian · 18:40</span>
+      <time class="clock" id="clock" datetime="" aria-label="Current time in Dalian, UTC+8">--:--:--</time>
+      <span>UTC+8</span>
     </p>
     <h1 class="hero__name" id="hero-name">{site.name}</h1>
-    <p class="hero__role">{site.line}</p>
-    <p class="hero__tag">{site.tagline}</p>
-    <a class="btn" href="/resume.pdf">Resume</a>
-    <p class="hero__status">
-      eJPTv2 · 3 national CTF wins · $2,150 high on Viator · <a href="mailto:21@achux.xyz">21@achux.xyz</a> · <a href="https://github.com/ACHUX21">GitHub</a>
-    </p>
+    <p class="hero__line">{site.line}</p>
   </div>
-  <Plate
-    class="hero__plate"
-    src="/images/plate-dalian.webp"
-    width={1280}
-    height={720}
-    loading="eager"
-    caption="plate 01 · dalian · 18:40"
-    alt="Utility poles and sagging power lines over a residential street in Dalian at dusk. One apartment window is lit. No people."
-  />
-  <Figure />
 </section>
 
 <script>

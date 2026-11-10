@@ -1,31 +1,41 @@
 ---
 import { projects } from '../data/projects';
+import { cases } from '../data/cases';
 ---
-<section class="layer work" id="work" aria-labelledby="work-title">
-  <p class="chrome">LAYER:03 <span>/work</span></p>
-  <div class="layer__main">
-    <h2 id="work-title">Work</h2>
-    <ul class="rows">
-      {projects.map((p) => (
-        <li class:list={{ 'is-feature': p.featured }}>
-          <h3>
-            {p.name}
-            {p.private && <span class="badge">private</span>}
-          </h3>
-          <div>
-            <p>{p.blurb}</p>
-            <p class="stackline">{p.stack}</p>
-          </div>
-          <div>
-            {p.repo && (
-              <a class="rowlink" href={p.repo} target="_blank" rel="noopener noreferrer">code →</a>
-            )}
-            {p.live && (
-              <a class="rowlink" href={p.live} target="_blank" rel="noopener noreferrer">site →</a>
-            )}
-          </div>
-        </li>
-      ))}
-    </ul>
+<section class="work" id="work" aria-labelledby="work-title">
+  <h2 id="work-title">Work</h2>
+  <ul class="projects">
+    {projects.map((p) => (
+      <li>
+        <h3>
+          {p.name}
+          {p.private && <span class="badge">private</span>}
+        </h3>
+        <p>{p.blurb}</p>
+        <p class="projects__stack">{p.stack}</p>
+        <p class="projects__links">
+          {p.repo && (
+            <a href={p.repo} target="_blank" rel="noopener noreferrer">code</a>
+          )}
+          {p.live && (
+            <a href={p.live} target="_blank" rel="noopener noreferrer">site</a>
+          )}
+        </p>
+      </li>
+    ))}
+  </ul>
+
+  <div class="cases">
+    <h3 class="cases__label">Writeups</h3>
+    {cases.map((c, i) => (
+      <article class:list={['case', i === 1 && 'case--flip']}>
+        <header>
+          <p>{c.event}</p>
+          <h3><a href={c.href} target="_blank" rel="noopener noreferrer">{c.title}</a></h3>
+        </header>
+        <pre class="http"><code>{c.request}</code></pre>
+        <p class="case__reached">{c.reached}</p>
+      </article>
+    ))}
   </div>
 </section>
