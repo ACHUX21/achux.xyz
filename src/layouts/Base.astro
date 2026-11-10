@@ -11,8 +11,10 @@ const {
   description = site.description,
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, site.url).href;
+const image = new URL('/og.png', site.url).href;
 ---
 <!doctype html>
+<!-- Achraf Ouazzani Chahidi (ACHUX21). 21@achux.xyz -->
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -22,20 +24,19 @@ const canonical = new URL(Astro.url.pathname, site.url).href;
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <meta name="author" content={site.name} />
-    <meta name="theme-color" content="#221828" />
+    <meta name="theme-color" content="#141218" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    <meta property="og:image" content={new URL('/images/plate-dalian.webp', site.url).href} />
+    <meta property="og:image" content={image} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={image} />
   </head>
   <body>
-    <div class="wire" aria-hidden="true"></div>
     <a class="skip" href="#main">Skip to content</a>
-    <div class="page">
-      <slot />
-    </div>
-    <div class="grain" aria-hidden="true"></div>
+    <slot />
   </body>
 </html>

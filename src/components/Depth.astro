@@ -1,0 +1,21 @@
+---
+const layers = [
+  { id: 'top', n: '00', name: 'plate' },
+  { id: 'whoami', n: '01', name: 'personal' },
+  { id: 'record', n: '02', name: 'public' },
+  { id: 'work', n: '03', name: 'work' },
+  { id: 'contact', n: '04', name: 'personal' },
+];
+---
+<nav class="depth" aria-label="Layers">
+  <ol>
+    {layers.map((layer) => (
+      <li>
+        <a href={`#${layer.id}`} data-depth={layer.id}>
+          <span class="depth__n">LAYER:{layer.n}</span>
+          <span class="depth__name">{layer.name}</span>
+        </a>
+      </li>
+    ))}
+  </ol>
+</nav>

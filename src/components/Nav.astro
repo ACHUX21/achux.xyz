@@ -2,23 +2,32 @@
 import { navLinks } from '../data/site';
 ---
 <nav class="nav" aria-label="Sections">
-  <a class="nav__brand" href="#top">ACHUX21</a>
-  <div class="nav__end">
-    <div class="nav__links">
-      {navLinks.map((l) => (
-        <a href={l.href}>{l.label}</a>
-      ))}
+  <div class="nav__row">
+    <a class="nav__brand" href="/">ACHUX21</a>
+    <div class="nav__end">
+      <div class="nav__links">
+        {navLinks.map((l) => (
+          <a href={l.href} data-section={l.id}>{l.label}</a>
+        ))}
+      </div>
+      <button
+        id="nav-open"
+        class="nav__menu"
+        type="button"
+        aria-haspopup="dialog"
+        aria-controls="nav-dialog"
+      >
+        menu
+      </button>
     </div>
-    <button
-      id="nav-open"
-      class="nav__menu"
-      type="button"
-      aria-haspopup="dialog"
-      aria-controls="nav-dialog"
-    >
-      menu
-    </button>
   </div>
+  <p class="signal" id="signal">
+    <span class="signal__dot" aria-hidden="true"></span>
+    <time class="clock" id="clock" datetime="" aria-label="Current time in Dalian, UTC+8">--:--:--</time>
+    <span>UTC+8</span>
+    <span id="signal-proto"></span>
+    <span id="signal-ms"></span>
+  </p>
 </nav>
 
 <dialog id="nav-dialog" class="menu" aria-label="Sections">
@@ -26,7 +35,7 @@ import { navLinks } from '../data/site';
     <button type="submit">close</button>
   </form>
   {navLinks.map((l) => (
-    <a href={l.href}>{l.label}</a>
+    <a href={l.href} data-section={l.id}>{l.label}</a>
   ))}
 </dialog>
 
@@ -40,4 +49,35 @@ import { navLinks } from '../data/site';
   dialog.querySelectorAll('a').forEach((a) => {
     a.addEventListener('click', () => dialog.close());
   });
+
+  const clock = document.getElementById('clock');
+  if (clock) {
+    const fmt = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Asia/Shanghai',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hourCycle: 'h23',
+    });
+    const tick = () => {
+      const now = new Date();
+      clock.textContent = fmt.format(now);
+      clock.setAttribute('datetime', now.toISOString());
+    };
+    tick();
+    setInterval(tick, 1000);
+  }
+
+  const proto = document.getElementById('signal-proto');
+  const ms = document.getElementById('signal-ms');
+  if (proto) proto.textContent = location.protocol;
+  const navTiming = performance.getEntriesByType('navigation')[0];
+  if (ms && navTiming) {
+    const delta = navTiming.responseEnd - navTiming.requestStart;
+    const value = delta > 0 ? delta : navTiming.duration;
+    if (value > 0) {
+      ms.textContent = Math.round(value) + 'ms';
+      ms.title = 'navigation responseEnd − requestStart';
+    }
+  }
 </script>

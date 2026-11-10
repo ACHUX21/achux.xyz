@@ -1,35 +1,26 @@
 ---
+import Protocol from './Protocol.astro';
 import { site } from '../data/site';
 import { facts } from '../data/record';
 ---
-<section class="layer whoami" id="whoami" aria-labelledby="whoami-title">
-  <p class="chrome">LAYER:01 <span>/whoami</span></p>
-  <div class="layer__main">
-    <div class="whoami__grid">
-      <div>
-        <h2 id="whoami-title">Whoami</h2>
-        <p class="prose">{site.about}</p>
-      </div>
-      <div>
-        <dl class="kv frame">
-          {facts.map((f) => (
-            <div>
-              <dt>{f.key}</dt>
-              <dd>
-                {f.href ? (
-                  <a href={f.href} target="_blank" rel="noopener noreferrer">{f.value}</a>
-                ) : (
-                  f.value
-                )}
-              </dd>
-            </div>
-          ))}
-        </dl>
-        <blockquote class="quote">
-          <p>{site.quote}</p>
-          <footer>F1ux bio · ACHUX21 · Member</footer>
-        </blockquote>
-      </div>
-    </div>
-  </div>
+<section class="whoami" id="whoami" aria-labelledby="whoami-title">
+  <Protocol path="/whoami" status="F1ux" layer="01" />
+  <h2 id="whoami-title" class="visually-hidden">Whoami</h2>
+  <p class="whoami__prose">{site.about}</p>
+  <ul class="whoami__facts">
+    {facts.map((f) => (
+      <li>
+        <span>{f.key}</span>
+        {f.href ? (
+          <a href={f.href} target="_blank" rel="noopener noreferrer">{f.value}</a>
+        ) : (
+          <span>{f.value}</span>
+        )}
+      </li>
+    ))}
+  </ul>
+  <blockquote class="quote">
+    <p>{site.quote}</p>
+    <footer>F1ux bio · ACHUX21 · Member</footer>
+  </blockquote>
 </section>

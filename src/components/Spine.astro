@@ -1,0 +1,84 @@
+<svg class="spine" id="spine" aria-hidden="true">
+  <path id="spine-path"></path>
+</svg>
+
+<script is:inline>
+  const main = document.getElementById('main');
+  const svg = document.getElementById('spine');
+  const path = document.getElementById('spine-path');
+  const sectionIds = ['top', 'whoami', 'record', 'work', 'contact'];
+
+  function yOf(el) {
+    const mainTop = main.getBoundingClientRect().top + window.scrollY;
+    return el.getBoundingClientRect().top + window.scrollY - mainTop;
+  }
+
+  function draw() {
+    if (!main || !svg || !path) return;
+    const height = main.scrollHeight;
+    svg.setAttribute('viewBox', `0 0 36 ${height}`);
+    svg.style.height = height + 'px';
+    const points = [];
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) points.push(yOf(el) + 28);
+    });
+    document.querySelectorAll('.line h3').forEach((el) => {
+      points.push(yOf(el) + 8);
+    });
+    points.sort((a, b) => a - b);
+    if (!points.length) return;
+    let d = `M 18 ${points[0]}`;
+    for (let i = 1; i < points.length; i++) {
+      const y0 = points[i - 1];
+      const y1 = points[i];
+      const mid = (y0 + y1) / 2;
+      const sag = i % 2 === 0 ? 8 : 28;
+      d += ` Q ${sag} ${mid} 18 ${y1}`;
+    }
+    path.setAttribute('d', d);
+    svg.querySelectorAll('circle').forEach((node) => node.remove());
+    points.forEach((y) => {
+      const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      c.setAttribute('cx', '18');
+      c.setAttribute('cy', String(y));
+      c.setAttribute('r', '2');
+      svg.appendChild(c);
+    });
+    const now = document.querySelector('.line h3.is-now');
+    if (now) {
+      const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      c.setAttribute('cx', '18');
+      c.setAttribute('cy', String(yOf(now) + 8));
+      c.setAttribute('r', '3.2');
+      c.setAttribute('class', 'is-now');
+      svg.appendChild(c);
+    }
+  }
+
+  draw();
+  window.addEventListener('load', draw);
+  window.addEventListener('resize', draw);
+
+  const depthLinks = [...document.querySelectorAll('[data-depth]')];
+  const navLinks = [...document.querySelectorAll('.nav [data-section]')];
+  const watch = sectionIds
+    .map((id) => document.getElementById(id))
+    .filter(Boolean);
+  const observer = new IntersectionObserver((entries) => {
+    const visible = entries
+      .filter((entry) => entry.isIntersecting)
+      .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+    if (!visible) return;
+    const id = visible.target.id;
+    depthLinks.forEach((link) => {
+      link.setAttribute('aria-current', link.getAttribute('data-depth') === id ? 'true' : 'false');
+    });
+    navLinks.forEach((link) => {
+      const on = link.getAttribute('data-section') === id;
+      if (on) link.setAttribute('aria-current', 'true');
+      else link.removeAttribute('aria-current');
+    });
+  }, { rootMargin: '-35% 0px -45% 0px', threshold: [0.1, 0.25, 0.5] });
+  watch.forEach((el) => observer.observe(el));
+</script>

@@ -3,7 +3,7 @@ export type Placement = {
   event: string;
   team: string;
   date: string;
-  /** Team prize in Moroccan dirhams, when a figure was actually published. */
+  /** Team prize. Shown only as small metadata, never as a headline. */
   prize?: string;
 };
 
@@ -21,7 +21,7 @@ export const placements: Placement[] = [
   { place: '14th', event: 'HTB Cyber Apocalypse 2024: Hacker Royale', team: 'L3ak', date: '2024' },
 ];
 
-export const prizeNote = 'Amounts are the team prize in Moroccan dirhams.';
+export const prizeNote = 'DH amounts are team prizes.';
 
 export type Credit = {
   event: string;
@@ -191,8 +191,6 @@ export type Bounty = {
   accepted?: string;
   profile?: string;
   profileLabel?: string;
-  source?: string;
-  sourceLabel?: string;
   note?: string;
 };
 
@@ -206,9 +204,6 @@ export const bounties: Bounty[] = [
     accepted: '10 Aug 2026',
     profile: 'https://bugcrowd.com/h/ACH21',
     profileLabel: 'bugcrowd.com/h/ACH21',
-    source: 'https://bugrater.com/activity/262',
-    sourceLabel: 'bugrater.com/activity/262',
-    note: 'BugRater notes this is the largest award Viator has published there.',
   },
   {
     program: 'Undisclosed Moroccan company',
@@ -219,15 +214,98 @@ export const bounties: Bounty[] = [
 ];
 
 export const facts: { key: string; value: string; href?: string }[] = [
-  { key: 'loc', value: 'Dalian, CN · from Morocco' },
-  { key: 'study', value: 'BSc Computer Science, Dalian Polytechnic University (2025–2029)' },
-  { key: 'school', value: 'Diploma, Cyber Security, ISGI Casablanca (2023 to 2025)' },
-  { key: 'work', value: 'IT Support Specialist, DPU (Apr 2026–)' },
-  { key: 'prev', value: 'Junior Penetration Tester, Swift IT, Casablanca (Jan–Mar 2025)' },
   {
-    key: 'cert',
-    value: 'eJPTv2 · INE · ID 89951440 · valid to Dec 2026',
+    key: 'Dalian',
+    value: 'BSc Computer Science, Dalian Polytechnic University (2025–2029). IT Support Specialist, DPU (Apr 2026–).',
+  },
+  { key: 'Swift IT', value: 'Junior Penetration Tester, Casablanca (Jan–Mar 2025).' },
+  {
+    key: 'eJPTv2',
+    value: 'INE · ID 89951440 · valid to Dec 2026',
     href: 'https://certs.ine.com/b1e71810-8c7d-45d1-a860-0766446b8171',
   },
-  { key: 'team', value: 'F1ux', href: 'https://blog.f1ux.team/members/' },
+  { key: 'F1ux', value: 'Member, listed as ACHUX21', href: 'https://blog.f1ux.team/members/' },
+];
+
+export type TimelineMark = {
+  year: '2023' | '2024' | '2025' | '2026';
+  when: string;
+  title: string;
+  href?: string;
+  /** Small figure under the mark. Not a headline. */
+  amount?: string;
+};
+
+/** Dated marks already on this site. The 16 same-day 1337 posts are one entry. */
+export const timeline: TimelineMark[] = [
+  { year: '2023', when: '25 Jun 2023', title: 'HackTheBox — Pilgrimage', href: post('pilgrimage') },
+  { year: '2023', when: '03 Jul 2023', title: 'TryHackMe — Cat Pictures 2', href: post('cat-pictures-2') },
+  { year: '2023', when: '07 Jul 2023', title: 'TryHackMe — Red', href: post('red') },
+  { year: '2023', when: '09 Jul 2023', title: 'HackTheBox — Sau', href: post('sau') },
+  { year: '2023', when: '10 Aug 2023', title: 'HackTheBox — TwoMillion', href: post('twomillion') },
+  {
+    year: '2024',
+    when: '14 Jan 2024',
+    title: 'UofTCTF — FFmpeg command injection & web cache deception',
+    href: post('uoftctf'),
+  },
+  { year: '2024', when: '15 Jan 2024', title: 'HackTheBox — C.O.P', href: post('cop') },
+  { year: '2024', when: '22 Jan 2024', title: 'Root-Me — SQL/NoSQL set', href: post('sql-nosql-root-me') },
+  { year: '2024', when: '20 Feb 2024', title: 'Root-Me — JWT unsecure file signature', href: post('jwt-unsecure-file-signature') },
+  { year: '2024', when: '01 Mar 2024', title: 'HackTheBox — Topology', href: post('topology') },
+  { year: '2024', when: '2024', title: '14th · HTB Cyber Apocalypse 2024: Hacker Royale · L3ak' },
+  {
+    year: '2024',
+    when: '2024',
+    title: 'L3akCTF — co-authored the web challenge PEPE with S1mple',
+    href: 'https://kashmir54.github.io/ctfs/L3akCTF2024/',
+  },
+  {
+    year: '2024',
+    when: '02 Nov 2024',
+    title: 'USC-CTF — SQLite3 injection via UPSERT',
+    href: post('usc-spookyql'),
+  },
+  {
+    year: '2024',
+    when: 'Dec 2024',
+    title: '2nd, open division · Cyber Odyssey 2024 · L3AK MA',
+    amount: '40,000 DH',
+  },
+  {
+    year: '2024',
+    when: 'Dec 2024',
+    title: 'GCDSTE Secure Tech × 0xNox — wrote and hosted the web challenges',
+  },
+  {
+    year: '2025',
+    when: '08 Mar 2025',
+    title: 'PearlCTF — SSRF to Docker socket → container escape',
+    href: post('pearlctf'),
+  },
+  { year: '2025', when: 'Apr 2025', title: '1st · MCSC v12 · PLOTONEA', amount: '15,000 DH' },
+  { year: '2025', when: 'Apr 2025', title: '1st · IDEH v6 CTF · PLOTONEA', amount: '9,000 DH' },
+  { year: '2025', when: 'May 2025', title: '1st · AISEC CTF · PLOTONEA', amount: '16,000 DH' },
+  {
+    year: '2026',
+    when: '27 Jun 2026',
+    title: `1337 Local CTF — ${localCtfWriteups.length} posts. ${firstBlood.text}`,
+    href: firstBlood.href,
+  },
+  { year: '2026', when: '10 Aug 2026', title: 'Viator · High · Bugcrowd as ACH21', amount: '$2,150 USD' },
+];
+
+export const timelineYears = ['2023', '2024', '2025', '2026'] as const;
+
+/** On the record, with no date published on the site. */
+export const undatedMarks: { title: string; note: string; amount?: string }[] = [
+  {
+    title: 'ISGI Casablanca / OFPPT',
+    note: 'Organized and built the challenges for the school CTF.',
+  },
+  {
+    title: 'Undisclosed Moroccan company',
+    note: 'P4. Unpublished. The company name is not shared.',
+    amount: '$150 USD',
+  },
 ];

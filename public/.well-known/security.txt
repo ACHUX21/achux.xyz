@@ -1,0 +1,4 @@
+Contact: mailto:21@achux.xyz
+Expires: 2027-11-10T00:00:00Z
+Preferred-Languages: en, fr
+Canonical: https://achux.xyz/.well-known/security.txt
