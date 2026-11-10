@@ -30,7 +30,7 @@
   src: url('@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-700-normal.woff2') format('woff2');
 }
 
-/* Dusk. Lavender is only for links. Signal red is the live mark. */
+/* Dusk. Lavender is the accent for links and the current mark. */
 
 @theme {
   --font-sans: 'IBM Plex Mono', ui-monospace, monospace;
@@ -45,7 +45,6 @@
   --muted: #cfc9d4;
   --quiet: #b7b1be;
   --lavender: #d4c6f2;
-  --signal: #c8102e;
   --line: #3a3544;
   --font-display: 'IBM Plex Mono', ui-monospace, monospace;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
@@ -157,7 +156,7 @@ main { position: relative; }
 .nav button:hover { color: var(--paper); }
 .nav__links a[aria-current='true'] {
   color: var(--paper);
-  box-shadow: inset 0 -2px 0 var(--signal);
+  box-shadow: inset 0 -2px 0 var(--lavender);
 }
 .nav .nav__menu { display: none; color: var(--paper); }
 
@@ -427,7 +426,7 @@ main { position: relative; }
   height: 0.4rem;
   margin-right: 0.4rem;
   border-radius: 50%;
-  background: var(--signal);
+  background: var(--lavender);
   vertical-align: 0.05em;
 }
 .line ol {
@@ -661,7 +660,7 @@ main { position: relative; }
   width: 0.45rem;
   height: 0.45rem;
   border-radius: 50%;
-  background: var(--signal);
+  background: var(--muted);
 }
 .layer-now { display: none; color: var(--paper); }
 .proto {
@@ -715,7 +714,7 @@ main { position: relative; }
   letter-spacing: 0.04em;
 }
 .depth a[aria-current='true'] { color: var(--paper); }
-.depth a[aria-current='true'] .depth__n { color: var(--signal); }
+.depth a[aria-current='true'] .depth__n { color: var(--lavender); }
 
 .spine {
   position: absolute;
@@ -733,7 +732,7 @@ main { position: relative; }
   stroke-width: 1.15;
 }
 .spine circle { fill: var(--quiet); }
-.spine circle.is-now { fill: var(--signal); }
+.spine circle.is-now { fill: var(--lavender); }
 @media (prefers-reduced-motion: no-preference) {
   .spine path {
     stroke-dasharray: 5 9;
@@ -784,7 +783,7 @@ main { position: relative; }
   margin: 0;
   padding: 0.45rem 0.8rem 0.6rem;
 }
-.cli label { color: var(--signal); }
+.cli label { color: var(--lavender); }
 .cli input {
   flex: 1;
   min-width: 0;
@@ -802,18 +801,6 @@ main { position: relative; }
   color: var(--paper);
 }
 
-.hero__gl,
-.hero__fallback {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-  pointer-events: none;
-}
-.hero__photo { opacity: 0.55; }
-.hero__fallback { display: none; }
-.hero__fallback:not([hidden]) { display: block; margin: auto; width: min(70vw, 28rem); height: auto; }
 .role {
   margin: 1rem 0 0;
   min-height: 1.4em;
@@ -921,7 +908,7 @@ main { position: relative; }
   .rail nav, .rail ul { display: grid; gap: 0.35rem; list-style: none; margin: 0; padding: 0; }
   .rail a { color: var(--muted); text-decoration: none; font-size: 0.72rem; min-height: 32px; display: flex; flex-direction: column; justify-content: center; }
   .rail a[aria-current='true'], .rail a:hover { color: var(--paper); }
-  .rail a[aria-current='true'] { box-shadow: inset 2px 0 0 var(--signal); padding-left: 0.4rem; }
+  .rail a[aria-current='true'] { box-shadow: inset 2px 0 0 var(--lavender); padding-left: 0.4rem; }
   .nav { left: 7.5rem; }
   .nav__links { display: none; }
   .spine { left: 7.5rem; }
