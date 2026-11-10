@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
+import Rail from '../components/Rail.astro';
 import Depth from '../components/Depth.astro';
 import Spine from '../components/Spine.astro';
 import Hero from '../components/Hero.astro';
@@ -12,6 +13,7 @@ import Command from '../components/Command.astro';
 ---
 <Base>
   <Nav />
+  <Rail />
   <Depth />
   <main id="main">
     <Spine />
@@ -23,3 +25,15 @@ import Command from '../components/Command.astro';
   </main>
   <Command />
 </Base>
+
+<script>
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll('.feature').forEach((feature) => {
+    if (reduce) return;
+    feature.classList.add('will-animate');
+    const observer = new IntersectionObserver((entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) feature.classList.add('is-in');
+    }, { threshold: 0.15 });
+    observer.observe(feature);
+  });
+</script>

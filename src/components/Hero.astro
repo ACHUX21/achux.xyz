@@ -1,6 +1,8 @@
 ---
 import Protocol from './Protocol.astro';
 import { site } from '../data/site';
+
+const roles = ['Web security', 'CTF player', 'Bug hunter', 'Writeups'];
 ---
 <section class="hero" id="top" aria-labelledby="hero-name">
   <img
@@ -18,8 +20,42 @@ import { site } from '../data/site';
     <Protocol path="/" status="Dalian" layer="00" />
     <p class="hero__meta">
       <span>plate 01 · dalian · 18:40</span>
+      <span>大连 · Dalian</span>
     </p>
     <h1 class="hero__name" id="hero-name">{site.name}</h1>
+    <p class="role" data-roles={roles.join('|')}>
+      <span id="role-word">{roles[0]}</span>
+    </p>
     <p class="hero__line">{site.line}</p>
   </div>
 </section>
+
+<script>
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const word = document.getElementById('role-word');
+  const roles = (word?.parentElement?.getAttribute('data-roles') || '').split('|').filter(Boolean);
+
+  if (word && !reduce && roles.length > 1) {
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    let index = 0;
+    const reveal = (next: string) => {
+      let step = 0;
+      const timer = setInterval(() => {
+        step += 1;
+        if (step < 6) {
+          word.textContent = next
+            .split('')
+            .map((char, i) => (i < step - 1 || char === ' ' ? char : alphabet[Math.floor(Math.random() * alphabet.length)]!))
+            .join('');
+        } else {
+          word.textContent = next;
+          clearInterval(timer);
+        }
+      }, 40);
+    };
+    setInterval(() => {
+      index = (index + 1) % roles.length;
+      reveal(roles[index]!);
+    }, 2800);
+  }
+</script>

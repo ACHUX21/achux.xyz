@@ -4,9 +4,22 @@ import { site } from '../data/site';
 import { facts } from '../data/record';
 ---
 <section class="whoami" id="whoami" aria-labelledby="whoami-title">
-  <Protocol path="/whoami" status="F1ux" layer="01" />
-  <h2 id="whoami-title" class="visually-hidden">Whoami</h2>
-  <p class="whoami__prose">{site.about}</p>
+  <div class="feature">
+    <div class="feature__copy">
+      <Protocol path="/whoami" status="F1ux" layer="01" />
+      <h2 id="whoami-title">Hi there</h2>
+      <p class="whoami__prose">{site.about}</p>
+      <p class="hero__meta">大连 · Dalian · UTC+8</p>
+      <blockquote class="quote">
+        <p>{site.quote}</p>
+        <footer>F1ux bio · ACHUX21 · Member</footer>
+      </blockquote>
+    </div>
+    <figure class="screen">
+      <img src="/images/plate-dalian.webp" width="1280" height="720" alt="Utility poles and sagging power lines over a residential street in Dalian at dusk. One apartment window is lit. No people." />
+      <figcaption>plate 01 · dalian · 18:40</figcaption>
+    </figure>
+  </div>
   <ul class="whoami__facts">
     {facts.map((f) => (
       <li>
@@ -19,8 +32,4 @@ import { facts } from '../data/record';
       </li>
     ))}
   </ul>
-  <blockquote class="quote">
-    <p>{site.quote}</p>
-    <footer>F1ux bio · ACHUX21 · Member</footer>
-  </blockquote>
 </section>

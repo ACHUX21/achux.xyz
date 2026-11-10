@@ -30,7 +30,7 @@
   src: url('@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-700-normal.woff2') format('woff2');
 }
 
-/* Dusk. Lavender is only for links. Signal red is the live mark. */
+/* Dusk. Lavender is the accent for links and the current mark. */
 
 @theme {
   --font-sans: 'IBM Plex Mono', ui-monospace, monospace;
@@ -45,7 +45,6 @@
   --muted: #cfc9d4;
   --quiet: #b7b1be;
   --lavender: #d4c6f2;
-  --signal: #c8102e;
   --line: #3a3544;
   --font-display: 'IBM Plex Mono', ui-monospace, monospace;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
@@ -157,7 +156,7 @@ main { position: relative; }
 .nav button:hover { color: var(--paper); }
 .nav__links a[aria-current='true'] {
   color: var(--paper);
-  box-shadow: inset 0 -2px 0 var(--signal);
+  box-shadow: inset 0 -2px 0 var(--lavender);
 }
 .nav .nav__menu { display: none; color: var(--paper); }
 
@@ -264,7 +263,6 @@ main { position: relative; }
 /* ---------- whoami ---------- */
 .whoami {
   padding: clamp(3.5rem, 8vw, 6.5rem) var(--pad);
-  max-width: 70ch;
 }
 .whoami__prose {
   margin: 0;
@@ -428,7 +426,7 @@ main { position: relative; }
   height: 0.4rem;
   margin-right: 0.4rem;
   border-radius: 50%;
-  background: var(--signal);
+  background: var(--lavender);
   vertical-align: 0.05em;
 }
 .line ol {
@@ -662,7 +660,7 @@ main { position: relative; }
   width: 0.45rem;
   height: 0.45rem;
   border-radius: 50%;
-  background: var(--signal);
+  background: var(--muted);
 }
 .layer-now { display: none; color: var(--paper); }
 .proto {
@@ -716,7 +714,7 @@ main { position: relative; }
   letter-spacing: 0.04em;
 }
 .depth a[aria-current='true'] { color: var(--paper); }
-.depth a[aria-current='true'] .depth__n { color: var(--signal); }
+.depth a[aria-current='true'] .depth__n { color: var(--lavender); }
 
 .spine {
   position: absolute;
@@ -734,7 +732,7 @@ main { position: relative; }
   stroke-width: 1.15;
 }
 .spine circle { fill: var(--quiet); }
-.spine circle.is-now { fill: var(--signal); }
+.spine circle.is-now { fill: var(--lavender); }
 @media (prefers-reduced-motion: no-preference) {
   .spine path {
     stroke-dasharray: 5 9;
@@ -785,7 +783,7 @@ main { position: relative; }
   margin: 0;
   padding: 0.45rem 0.8rem 0.6rem;
 }
-.cli label { color: var(--signal); }
+.cli label { color: var(--lavender); }
 .cli input {
   flex: 1;
   min-width: 0;
@@ -803,8 +801,131 @@ main { position: relative; }
   color: var(--paper);
 }
 
+.role {
+  margin: 1rem 0 0;
+  min-height: 1.4em;
+  font-weight: 700;
+  font-size: clamp(1.1rem, 2vw, 1.6rem);
+  letter-spacing: -0.04em;
+}
+.rail {
+  display: none;
+}
+.feature {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(1.5rem, 4vw, 4rem);
+  align-items: center;
+  padding: clamp(3rem, 8vw, 6rem) 0;
+}
+.feature--flip .screen { order: -1; }
+.feature__index {
+  margin: 0 0 0.4rem;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+.feature h2 {
+  margin: 0 0 0.8rem;
+  font-weight: 700;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  letter-spacing: -0.04em;
+  line-height: 1.15;
+}
+.feature__copy p { max-width: 70ch; line-height: 1.65; }
+.screen {
+  border: 1px solid var(--line);
+  background: var(--bg-raise);
+  padding: 1rem 1.1rem 1.25rem;
+  min-width: 0;
+  overflow: hidden;
+}
+.screen .places { grid-template-columns: 1fr 1fr; }
+.screen .giant__num { font-size: clamp(1.8rem, 3vw, 2.6rem); }
+.feature--flip .screen { transform: none; }
+.screen img { display: block; width: 100%; height: auto; }
+.screen figcaption,
+.screen__label {
+  margin: 0 0 0.6rem;
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-top: 0.8rem;
+  padding: 0 0.9rem;
+  border: 1px solid var(--paper);
+  color: var(--paper);
+  text-decoration: none;
+  font-weight: 500;
+}
+.btn:hover { border-color: var(--lavender); color: var(--lavender); }
+.mail { display: grid; gap: 0.8rem; margin-top: 1.2rem; max-width: 36rem; }
+.mail label { display: grid; gap: 0.3rem; font-size: 0.78rem; color: var(--muted); }
+.mail input,
+.mail textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--paper);
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1.5;
+  padding: 0.6rem 0.7rem;
+}
+.feature .feature__copy,
+.feature .screen {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .feature.will-animate:not(.is-in) .feature__copy,
+  .feature.will-animate:not(.is-in) .screen {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  .feature.will-animate .feature__copy,
+  .feature.will-animate .screen {
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+}
+@media (min-width: 769px) {
+  .rail {
+    position: fixed;
+    z-index: 45;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 7.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1rem 0.6rem;
+    border-right: 1px solid var(--line);
+    background: var(--bg);
+  }
+  .rail nav, .rail ul { display: grid; gap: 0.35rem; list-style: none; margin: 0; padding: 0; }
+  .rail a { color: var(--muted); text-decoration: none; font-size: 0.72rem; min-height: 32px; display: flex; flex-direction: column; justify-content: center; }
+  .rail a[aria-current='true'], .rail a:hover { color: var(--paper); }
+  .rail a[aria-current='true'] { box-shadow: inset 2px 0 0 var(--lavender); padding-left: 0.4rem; }
+  .nav { left: 7.5rem; }
+  .nav__links { display: none; }
+  .spine { left: 7.5rem; }
+  .hero__copy,
+  .whoami,
+  .record,
+  .work,
+  .contact,
+  .colophon { padding-left: calc(var(--pad) + 7.5rem); }
+}
+
 /* ---------- breakpoints ---------- */
 @media (max-width: 900px) {
+  .feature,
+  .feature--flip { grid-template-columns: 1fr; }
+  .feature--flip .screen { order: 0; }
+  .screen, .feature.is-in .screen, .feature--flip.is-in .screen { transform: none; }
   .places,
   .findings,
   .line__years { grid-template-columns: 1fr; }
