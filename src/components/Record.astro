@@ -5,11 +5,8 @@ import {
   placements,
   prizeNote,
   bounties,
-  timeline,
-  timelineYears,
   undatedMarks,
   teams,
-  ctfCount,
 } from '../data/record';
 
 const placeMarks = placements
@@ -24,13 +21,9 @@ const placeMarks = placements
 const htb = placements.find((p) => p.place.startsWith('14'))!;
 const viator = bounties[0];
 const p4 = bounties[1];
-const byYear = timelineYears.map((year) => ({
-  year,
-  marks: timeline.filter((m) => m.year === year),
-}));
 ---
 <section class="record" id="record" aria-labelledby="record-title">
-  <SectionHead path="/record" status={`${ctfCount} events`} layer="02" headingId="record-title">Record</SectionHead>
+  <SectionHead path="/record" layer="02" headingId="record-title">Record</SectionHead>
   <div class="feature">
     <div class="feature__copy">
       <p>Three firsts in 2025 with PLOTONEA. Second in the Cyber Odyssey 2024 open division with L3AK MA.</p>
@@ -51,30 +44,15 @@ const byYear = timelineYears.map((year) => ({
     </div>
   </div>
 
+  <p class="authored">
+    <span class="authored__k">Authored</span>
+    Co-authored the L3akCTF web challenge <a href="https://kashmir54.github.io/ctfs/L3akCTF2024/" target="_blank" rel="noopener noreferrer">PEPE</a> with S1mple, and wrote and hosted the web challenges for GCDSTE Secure Tech × 0xNox, Dec 2024.
+  </p>
+  <p class="btn-line">
+    <a class="btn" href="https://blog.achux.xyz" target="_blank" rel="noopener noreferrer">All writeups</a>
+    <span class="out__host">blog.achux.xyz</span>
+  </p>
   <div class="line">
-    <div class="line__years">
-      {byYear.map((col) => (
-        <div>
-          <h3 class:list={{ 'is-now': col.year === '2026' }}>{col.year}</h3>
-          <ol>
-            {col.marks.map((m) => (
-              <li>
-                <time>{m.when}</time>
-                {m.href ? (
-                  <a class="with-host" href={m.href} target="_blank" rel="noopener noreferrer">
-                    <span>{m.title}</span>
-                    <span class="out__host">{hostOf(m.href)}</span>
-                  </a>
-                ) : (
-                  <span>{m.title}</span>
-                )}
-                {m.amount && <span class="amount">{m.amount}</span>}
-              </li>
-            ))}
-          </ol>
-        </div>
-      ))}
-    </div>
     <ul class="undated">
       {undatedMarks.map((m) => (
         <li>
